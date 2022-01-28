@@ -1,9 +1,9 @@
 import {createContext, useContext, useMemo, useState} from 'react';
 
-const AppContext = createContext({vision: {}});
+const AppContext = createContext({});
 
 export function AppWrapper({children}) {
-  const [AppState, setAppState] = useState({vision: {}});
+  const [AppState, setAppState] = useState({});
 
   const contextValue = useMemo(() => {
     return [AppState, setAppState];
@@ -14,6 +14,6 @@ export function AppWrapper({children}) {
   );
 }
 
-export function useAppContext() {
+export function useAppContext(): any {
   return useContext(AppContext);
 }

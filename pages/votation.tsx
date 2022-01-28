@@ -19,7 +19,7 @@ export default function Votation() {
   const [ideaIndex, setIdeaIndex] = useState(0);
   const router = useRouter();
 
-  const [appState, setAppState] = useAppContext();
+  const [_appState, setAppState] = useAppContext();
 
   const ideasArray = Object.values(IDEIAS);
 

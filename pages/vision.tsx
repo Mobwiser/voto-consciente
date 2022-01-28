@@ -1,17 +1,15 @@
 import Head from 'next/head';
 import {useAppContext} from '../context/AppContext';
 import {Radar} from 'react-chartjs-2';
-import {Idea, IDEIAS, Parties, SupportValues, VOTE_MATRIX} from './api/parties';
+import {Idea, IDEIAS, Parties, VOTE_MATRIX} from './api/parties';
 import {
   Flex,
   Heading,
   Stat,
   StatArrow,
-  StatGroup,
   StatHelpText,
   StatLabel,
   StatNumber,
-  Text,
 } from '@chakra-ui/react';
 
 interface PartySupport {
@@ -30,7 +28,7 @@ export default function Vision() {
     {},
   );
 
-  const vision: Record<number, number> = appState.vision;
+  const vision: Record<number, number> = appState.vision || {};
 
   Object.keys(vision).forEach((ideaId: string) => {
     const idea: Idea = IDEIAS[ideaId];
@@ -49,7 +47,7 @@ export default function Vision() {
     datasets: [
       {
         label: 'My society vision',
-        data: Object.values(partySupport).map(
+        data: (Object.values(partySupport) || []).map(
           (partySupport) => partySupport.support,
         ),
         backgroundColor: 'rgba(178,245,234, 0.2)',
@@ -99,8 +97,8 @@ export default function Vision() {
             Compatibilidade com os diferentes partidos
           </Heading>
           <Flex wrap="wrap">
-            {partySupportArray.map((partySupport) => (
-              <Stat minW="30vw" textAlign="center">
+            {partySupportArray.map((partySupport, index) => (
+              <Stat minW="30vw" textAlign="center" key={`stat_${index}`}>
                 <StatLabel>{partySupport.name}</StatLabel>
                 <StatNumber>{partySupport.support}</StatNumber>
                 <StatHelpText>
