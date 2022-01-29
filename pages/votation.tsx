@@ -80,7 +80,7 @@ export default function Votation() {
               p={2}
               w={'100vw'}
             >
-              Society vision
+              Visão da sociedade
             </Heading>
             <Progress
               colorScheme="green"

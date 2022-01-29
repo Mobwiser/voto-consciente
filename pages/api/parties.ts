@@ -50,28 +50,28 @@ export const VOTE_MATRIX: Record<
   Record<SupportValues, number>
 > = {
   [SupportValues.FAVOR]: {
-    [SupportValues.FAVOR]: 2,
+    [SupportValues.FAVOR]: 3,
     [SupportValues.ABSTAIN]: 0,
-    [SupportValues.AGAINST]: -1,
-    [SupportValues.BLOCKER]: -5,
+    [SupportValues.AGAINST]: -3,
+    [SupportValues.BLOCKER]: -10,
   },
   [SupportValues.ABSTAIN]: {
     [SupportValues.FAVOR]: 0,
     [SupportValues.ABSTAIN]: 0,
     [SupportValues.AGAINST]: -1,
-    [SupportValues.BLOCKER]: -3,
+    [SupportValues.BLOCKER]: -5,
   },
   [SupportValues.AGAINST]: {
-    [SupportValues.FAVOR]: -2,
-    [SupportValues.ABSTAIN]: 0,
-    [SupportValues.AGAINST]: 2,
+    [SupportValues.FAVOR]: -3,
+    [SupportValues.ABSTAIN]: -1,
+    [SupportValues.AGAINST]: 3,
     [SupportValues.BLOCKER]: 2,
   },
   [SupportValues.BLOCKER]: {
-    [SupportValues.FAVOR]: -5,
-    [SupportValues.ABSTAIN]: -2,
-    [SupportValues.AGAINST]: 2,
-    [SupportValues.BLOCKER]: 2,
+    [SupportValues.FAVOR]: -10,
+    [SupportValues.ABSTAIN]: -3,
+    [SupportValues.AGAINST]: 3,
+    [SupportValues.BLOCKER]: 5,
   },
 };
 

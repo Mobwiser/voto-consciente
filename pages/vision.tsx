@@ -46,7 +46,7 @@ export default function Vision() {
     labels,
     datasets: [
       {
-        label: 'My society vision',
+        label: 'Enquadramento politico',
         data: (Object.values(partySupport) || []).map(
           (partySupport) => partySupport.support,
         ),
