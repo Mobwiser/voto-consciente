@@ -1,3 +1,9 @@
+import { NextApiRequest, NextApiResponse } from "next";
+import {collection, query, getDocs} from 'firebase/firestore';
+import { appFirebaseDb } from "../../firebase";
+
+const collectionName = 'parties';
+
 export enum Subjects {
   HEALTH = 'health',
   FINANCES = 'finances',
@@ -37,6 +43,7 @@ export enum SupportValues {
   ABSTAIN = 'abstain',
   BLOCKER = 'blocker',
 }
+
 export interface Idea {
   id: number;
   subject: Subjects;
@@ -74,6 +81,20 @@ export const VOTE_MATRIX: Record<
     [SupportValues.BLOCKER]: 5,
   },
 };
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  switch(req.method) {
+    case 'GET':
+      const partiesRef = collection(appFirebaseDb, collectionName);
+      const firebaseQuery = query(partiesRef);
+      const querySnapshot = await getDocs(firebaseQuery);
+
+      res.status(200).json(querySnapshot.docs.map(doc => doc.data()));
+      break;
+    default:
+      throw new Error('Unsupported method');
+  }
+}
 
 export const IDEIAS: Record<number, Idea> = {
   1: {
