@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import {collection, query, getDocs} from 'firebase/firestore';
 import { appFirebaseDb } from "../../firebase";
 
-const collectionName = 'parties';
+export const partiesCollectionName = 'parties';
 
 export enum Subjects {
   HEALTH = 'health',
@@ -85,7 +85,7 @@ export const VOTE_MATRIX: Record<
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   switch(req.method) {
     case 'GET':
-      const partiesRef = collection(appFirebaseDb, collectionName);
+      const partiesRef = collection(appFirebaseDb, partiesCollectionName);
       const firebaseQuery = query(partiesRef);
       const querySnapshot = await getDocs(firebaseQuery);
 
