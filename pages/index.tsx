@@ -6,7 +6,7 @@ export default function Home() {
   return (
     <div className={styles.container}>
       <Head>
-        <title>Society Vision</title>
+        <title>Voto consciente</title>
         <meta
           name="description"
           content="Verifica a tua identidade politica de acordo com a tua visão da sociedade"

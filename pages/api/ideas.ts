@@ -11,7 +11,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const firebaseQuery = query(partiesRef);
             const querySnapshot = await getDocs(firebaseQuery);
 
-            res.status(200).json(querySnapshot.docs.map(doc => doc.data()));
+            res.status(200).json(querySnapshot.docs.map(doc => ({...doc.data(), id: doc.id})));
             break;
         default:
             throw new Error('Unsupported method');

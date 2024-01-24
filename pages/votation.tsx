@@ -10,18 +10,26 @@ import {
 import Head from 'next/head';
 import styles from '../styles/Home.module.css';
 import {FaQuestion, FaRegGrinAlt, FaRegAngry, FaRegFrown} from 'react-icons/fa';
-import {useState} from 'react';
-import {Idea, IDEIAS, SupportValues} from './api/parties';
+import {useEffect, useState} from 'react';
+import {Idea, SupportValues} from './api/parties';
 import {useRouter} from 'next/router';
 import {useAppContext} from '../context/AppContext';
 
 export default function Votation() {
   const [ideaIndex, setIdeaIndex] = useState(0);
+  const [ideas, setIdeas] = useState<Idea[]>([]);
+  useEffect(() => {
+    fetch('/api/ideas').then((response) => response.json()).then((data) => {
+      setIdeas(data);
+      setAppState((prevState) => ({
+        ...prevState,
+        ideas: data.reduce((ideasMap: Record<string, Idea>, idea: Idea) => ({...ideasMap, [idea.id.toString()]: idea}), {} ),
+      }));
+    })
+  }, []);
   const router = useRouter();
 
   const [_appState, setAppState] = useAppContext();
-
-  const ideasArray = Object.values(IDEIAS);
 
   const handleVote = (vote: SupportValues, idea: Idea) => {
     handleVoteValue(idea, vote);
@@ -36,14 +44,14 @@ export default function Votation() {
       },
     }));
 
-    if (ideaIndex + 1 === ideasArray.length) {
+    if (ideaIndex + 1 === ideas.length) {
       router.push('/vision');
     } else {
       setIdeaIndex(ideaIndex + 1);
     }
   };
 
-  const currentIdea: () => Idea = () => ideasArray[ideaIndex];
+  const currentIdea: () => Idea = () => ideas[ideaIndex];
   return (
     <div className={styles.container}>
       <Head>
@@ -86,7 +94,7 @@ export default function Votation() {
               colorScheme="green"
               height="32px"
               w="90vw"
-              value={(ideaIndex / ideasArray.length) * 100}
+              value={(ideaIndex / ideas.length) * 100}
             />
           </Flex>
 
@@ -96,7 +104,7 @@ export default function Votation() {
             alignItems="center"
             flex="4"
           >
-            {ideasArray.map(
+            {ideas.map(
               (idea, index) =>
                 index === ideaIndex && (
                   <Box

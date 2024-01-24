@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import {useAppContext} from '../context/AppContext';
 import {Radar} from 'react-chartjs-2';
-import {Idea, IDEIAS, Parties, VOTE_MATRIX} from './api/parties';
+import {Idea, Party} from './api/parties';
 import {
   Flex,
   Heading,
@@ -11,6 +11,8 @@ import {
   StatLabel,
   StatNumber,
 } from '@chakra-ui/react';
+import {useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 
 interface PartySupport {
   name: string;
@@ -18,24 +20,41 @@ interface PartySupport {
 }
 export default function Vision() {
   const [appState] = useAppContext();
+  const [parties, setParties] = useState<Party[]>();
+  const [ideas, setIdeas] = useState(appState.ideas);
+  const router = useRouter();
+  const vision: Record<number, number> | undefined = appState.vision;
 
-  const labels: string[] = Object.values(Parties);
-  const partySupport: Record<string, PartySupport> = labels.reduce(
-    (support: Record<string, PartySupport>, party: string) => {
-      support[party] = {name: party, support: 0};
+  useEffect(() => {
+    fetch('/api/parties').then((response) => response.json()).then((data) =>{
+      setParties(data);
+    });
+  }, []);
+
+  if(!parties?.length) {
+    return; // FIXME: Add loading
+  }
+
+  const partySupport: Record<string, PartySupport> = parties.reduce(
+    (support: Record<string, PartySupport>, party: Party) => {
+      support[party.acronym] = {name: party.name, support: 0};
       return support;
     },
     {},
-  );
+  )
 
-  const vision: Record<number, number> = appState.vision || {};
+  if(!vision) {
+    router.push('/votation');
+  }
 
   Object.keys(vision).forEach((ideaId: string) => {
-    const idea: Idea = IDEIAS[ideaId];
-    Object.keys(idea.partiesVision).forEach((party: Parties) => {
-      const proximity = VOTE_MATRIX[vision[ideaId]][idea.partiesVision[party]];
-      partySupport[party].support += proximity;
-    });
+    const idea: Idea = ideas[ideaId];
+    console.log(idea);
+    parties.forEach((party) => {
+      if(idea.owners.includes(party.acronym)) {
+        partySupport[party.acronym].support += 1;
+      }
+    })
   });
 
   const partySupportArray = Object.values(partySupport).sort(
@@ -43,10 +62,10 @@ export default function Vision() {
   );
 
   const data = {
-    labels,
+    labels: parties.map(party => party.acronym),
     datasets: [
       {
-        label: 'Enquadramento politico',
+        label: 'Compatibilidade politica',
         data: (Object.values(partySupport) || []).map(
           (partySupport) => partySupport.support,
         ),
@@ -61,7 +80,7 @@ export default function Vision() {
   return (
     <div>
       <Head>
-        <title>Society Vision</title>
+        <title>Voto consciente</title>
         <meta
           name="description"
           content="Verifica a tua identidade politica de acordo com a tua visão da sociedade"
