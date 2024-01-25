@@ -1,6 +1,7 @@
-import {Button, Flex, Heading, Link, Text} from '@chakra-ui/react';
+import {Button, Center, Flex, Heading, Link, Text, Image} from '@chakra-ui/react';
 import Head from 'next/head';
 import styles from '../styles/Home.module.css';
+import React from "react";
 
 export default function Home() {
   return (
@@ -47,6 +48,9 @@ export default function Home() {
             </Button>
           </Link>
         </Flex>
+        <Center bg='tomato' color='white'>
+          <Image src='logo.png' alt='Logo voto consciente' h={'100px'} />
+        </Center>
       </main>
     </div>
   );

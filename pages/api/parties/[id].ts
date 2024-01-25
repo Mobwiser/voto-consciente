@@ -10,8 +10,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const {id} = req.query;
 
-    console.log(id);
-
     switch(req.method) {
         case 'GET':
             const queryRef = doc(appFirebaseDb, partiesCollectionName, id.toString());

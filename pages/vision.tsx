@@ -43,13 +43,13 @@ export default function Vision() {
     {},
   )
 
+  console.log(vision);
   if(!vision) {
     router.push('/votation');
   }
 
   Object.keys(vision).forEach((ideaId: string) => {
     const idea: Idea = ideas[ideaId];
-    console.log(idea);
     parties.forEach((party) => {
       if(idea.owners.includes(party.acronym)) {
         partySupport[party.acronym].support += 1;
