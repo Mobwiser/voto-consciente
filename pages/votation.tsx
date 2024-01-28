@@ -115,7 +115,7 @@ export default function Votation() {
               (idea, index) =>
                 index === ideaIndex && (
                     <Flex  key={`Idea_${index}`} flexDirection={"column"} alignItems={"center"}  justifyContent={"center"} w={"90vw"}>
-                      <Heading size="lg" color="white" marginBottom={"2rem"}>
+                      <Heading size="lg" marginBottom={"2rem"}>
                         {idea.title}
                       </Heading>
                       <Flex
