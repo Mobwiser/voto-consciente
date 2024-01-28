@@ -109,18 +109,22 @@ export default function Votation() {
             justifyContent="center"
             alignItems="center"
             flex="4"
+            w="100vw"
           >
             {ideas.map(
               (idea, index) =>
                 index === ideaIndex && (
-                    <Flex  key={`Idea_${index}`} flexDirection={"column"} alignItems={"center"} >
+                    <Flex  key={`Idea_${index}`} flexDirection={"column"} alignItems={"center"}  justifyContent={"center"} w={"90vw"}>
+                      <Heading size="lg" color="white" marginBottom={"2rem"}>
+                        {idea.title}
+                      </Heading>
                       <Flex
                           flexDirection={"column"}
                           alignItems={"center"}
                           justifyContent={"space-between"}
                           bg="primary"
                           w="90vw"
-                          minH="300px"
+                          minH="200px"
                           p={4}
                           color="primary"
                           borderColor="accent"
@@ -129,9 +133,6 @@ export default function Votation() {
                           fontSize="22px"
                           textAlign="center"
                       >
-                        <Heading size="lg" color="white">
-                          {idea.title}
-                        </Heading>
                         <Text color="black" mt={15}>
                           {idea.description}
                         </Text>
