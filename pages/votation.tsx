@@ -4,19 +4,21 @@ import {
   Flex,
   Heading,
   Icon,
+  IconButton,
   Progress,
   Text,
 } from '@chakra-ui/react';
 import Head from 'next/head';
 import styles from '../styles/Home.module.css';
-import {FaQuestion, FaRegGrinAlt, FaRegAngry, FaRegFrown} from 'react-icons/fa';
-import {useEffect, useState} from 'react';
+import {FaQuestion, FaRegGrinAlt, FaRegAngry, FaRegFrown, FaArrowDown, FaArrowUp} from 'react-icons/fa';
+import React, {useEffect, useState} from 'react';
 import {Idea, SupportValues} from './api/parties';
 import {useRouter} from 'next/router';
 import {useAppContext} from '../context/AppContext';
 
 export default function Votation() {
   const [ideaIndex, setIdeaIndex] = useState(0);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const [ideas, setIdeas] = useState<Idea[]>([]);
   useEffect(() => {
     fetch('/api/ideas').then((response) => response.json()).then((data) => {
@@ -35,6 +37,8 @@ export default function Votation() {
     handleVoteValue(idea, vote);
   };
 
+  const toggleIsOpen = () => setIsOpen(!isOpen);
+
   const handleVoteValue = (idea: Idea, support: SupportValues) => {
     setAppState((prevState) => ({
       ...prevState,
@@ -52,10 +56,12 @@ export default function Votation() {
   };
 
   const currentIdea: () => Idea = () => ideas[ideaIndex];
+  const showInfo = (index) => ideaIndex === index && isOpen;
+
   return (
     <div className={styles.container}>
       <Head>
-        <title>Society Vision</title>
+        <title>Voto consciente</title>
         <meta
           name="description"
           content="Verifica a tua identidade politica de acordo com a tua visão da sociedade"
@@ -67,9 +73,7 @@ export default function Votation() {
         <Flex
           flexDirection="column"
           justifyContent="space-around"
-          alignItems="center"
-          h="100vh"
-          w="100%"
+          alignItems="self-start"
         >
           <Flex
             flexDirection="column"
@@ -88,12 +92,14 @@ export default function Votation() {
               p={2}
               w={'100vw'}
             >
-              Visão da sociedade
+              Voto consciente
             </Heading>
             <Progress
               colorScheme="green"
               height="32px"
               w="90vw"
+              marginTop={"1rem"}
+              marginBottom={"1rem"}
               value={(ideaIndex / ideas.length) * 100}
             />
           </Flex>
@@ -107,79 +113,109 @@ export default function Votation() {
             {ideas.map(
               (idea, index) =>
                 index === ideaIndex && (
-                  <Box
-                    key={`Idea_${index}`}
-                    bg="primary"
-                    w="90vw"
-                    minH="300px"
-                    p={4}
-                    color="teal.900"
-                    borderColor="accent"
-                    border="2px"
-                    borderRadius="3px"
-                    fontSize="22px"
-                    textAlign="center"
-                  >
-                    <Heading size="lg" color="teal.900">
-                      {idea.title}
-                    </Heading>
-                    <Text color="teal.700" mt={15}>
-                      {idea.description}
-                    </Text>
-                  </Box>
+                    <Flex  key={`Idea_${index}`} flexDirection={"column"} alignItems={"center"} >
+                      <Flex
+                          flexDirection={"column"}
+                          alignItems={"center"}
+                          justifyContent={"space-between"}
+                          bg="primary"
+                          w="90vw"
+                          minH="300px"
+                          p={4}
+                          color="primary"
+                          borderColor="accent"
+                          border="2px"
+                          borderRadius="3px"
+                          fontSize="22px"
+                          textAlign="center"
+                      >
+                        <Heading size="lg" color="white">
+                          {idea.title}
+                        </Heading>
+                        <Text color="black" mt={15}>
+                          {idea.description}
+                        </Text>
+
+                        {showInfo(index) && (<IconButton aria-label='Show info'
+                                    icon={<Icon as={FaArrowUp} color="white" w={6} h={6}></Icon>}
+                                    onClick={toggleIsOpen}
+                        />)}
+                        {!showInfo(index) && (<IconButton aria-label='Hide info'
+                                                         icon={<Icon as={FaArrowDown} color="white" w={6} h={6}></Icon>}
+                                                         onClick={toggleIsOpen}
+                        />)}
+                      </Flex>
+                      {showInfo(index) && (<Box bgColor={"lightgrey"}  w="90vw" p={"1rem"} color={"black"}>
+                        {idea.info}
+                      </Box>)}
+                    </Flex>
+
                 ),
             )}
             <Flex
               justifyContent="space-around"
+              alignItems={"flex-start"}
               width="100%"
               marginTop={50}
               marginLeft={20}
               marginRight={20}
             >
-              <Button
-                w="50px"
-                h="50px"
-                bgColor="emojies.favor"
-                borderRadius="50px"
-                lineHeight="62px"
-                textAlign="center"
-                onClick={() => handleVote(SupportValues.FAVOR, currentIdea())}
-              >
-                <Icon as={FaRegGrinAlt} color="white" w={6} h={6} />
-              </Button>
-              <Button
-                w="50px"
-                h="50px"
-                bgColor="emojies.abstain"
-                borderRadius="50px"
-                lineHeight="62px"
-                textAlign="center"
-                onClick={() => handleVote(SupportValues.ABSTAIN, currentIdea())}
-              >
-                <Icon as={FaQuestion} color="white" w={6} h={6} />
-              </Button>
-              <Button
-                w="50px"
-                h="50px"
-                bgColor="emojies.against"
-                borderRadius="50px"
-                lineHeight="62px"
-                textAlign="center"
-                onClick={() => handleVote(SupportValues.AGAINST, currentIdea())}
-              >
-                <Icon as={FaRegFrown} color="white" w={6} h={6} />
-              </Button>
-              <Button
-                w="50px"
-                h="50px"
-                bgColor="emojies.blocker"
-                borderRadius="50px"
-                lineHeight="62px"
-                textAlign="center"
-                onClick={() => handleVote(SupportValues.BLOCKER, currentIdea())}
-              >
-                <Icon as={FaRegAngry} color="white" w={6} h={6} />
-              </Button>
+              <Flex flexDirection={"column"} alignItems={"center"} justifyContent={"center"} maxW={"60px"}>
+                <Button
+                    w="50px"
+                    h="50px"
+                    bgColor="emojies.favor"
+                    borderRadius="50px"
+                    lineHeight="62px"
+                    textAlign="center"
+                    onClick={() => handleVote(SupportValues.FAVOR, currentIdea())}
+                >
+                  <Icon as={FaRegGrinAlt} color="white" w={6} h={6} />
+                </Button>
+                <Text textAlign={"center"}>Concordo</Text>
+              </Flex>
+              <Flex flexDirection={"column"} alignItems={"center"} justifyContent={"center"} maxW={"60px"}>
+                <Button
+                  w="50px"
+                  h="50px"
+                  bgColor="emojies.against"
+                  borderRadius="50px"
+                  lineHeight="62px"
+                  textAlign="center"
+                  onClick={() => handleVote(SupportValues.AGAINST, currentIdea())}
+                >
+                  <Icon as={FaRegFrown} color="white" w={6} h={6} />
+                </Button>
+                <Text textAlign={"center"}>Não concordo</Text>
+              </Flex>
+              <Flex flexDirection={"column"} alignItems={"center"} justifyContent={"center"} maxW={"60px"}>
+                <Button
+                  w="50px"
+                  h="50px"
+                  bgColor="emojies.blocker"
+                  borderRadius="50px"
+                  lineHeight="62px"
+                  textAlign="center"
+                  onClick={() => handleVote(SupportValues.BLOCKER, currentIdea())}
+                >
+                  <Icon as={FaRegAngry} color="white" w={6} h={6} />
+                </Button>
+                <Text textAlign={"center"}>Nem pensar</Text>
+              </Flex>
+              <Flex flexDirection={"column"} alignItems={"center"} justifyContent={"center"} maxW={"60px"}>
+                <Button
+                    w="50px"
+                    h="50px"
+                    bgColor="emojies.abstain"
+                    borderRadius="50px"
+                    lineHeight="62px"
+                    textAlign="center"
+                    onClick={() => handleVote(SupportValues.ABSTAIN, currentIdea())}
+                >
+                  <Icon as={FaQuestion} color="white" w={6} h={6} />
+                </Button>
+                <Text textAlign={"center"}>Não tenho opinião</Text>
+              </Flex>
             </Flex>
           </Flex>
         </Flex>

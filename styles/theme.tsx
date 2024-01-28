@@ -1,12 +1,20 @@
 import {extendTheme} from '@chakra-ui/react';
 
+import "@fontsource/montserrat"; // Defaults to weight 400
+import "@fontsource/montserrat/400.css"; // Specify weight
+import "@fontsource/montserrat/400-italic.css"; //
+
 const theme = extendTheme({
+  fonts: {
+    heading: `Montserrat, sans-serif`,
+    body: `'Montserrat', sans-serif`,
+  },
   config: {
     initialColorMode: 'light',
   },
   colors: {
-    primary: '#B2F5EA',
-    accent: '#0788A0',
+    primary: '#F1A16E',
+    accent: '#F1A16E',
     emojies: {
       favor: '#8bc68b',
       against: '#fbbd50',

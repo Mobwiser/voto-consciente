@@ -61,6 +61,10 @@ export default function Vision() {
     (a, b) => b.support - a.support,
   );
 
+  console.log('data', (Object.values(partySupport) || []).map(
+      (partySupport) => partySupport.support,
+  ));
+
   const data = {
     labels: parties.map(party => party.acronym),
     datasets: [
@@ -70,9 +74,8 @@ export default function Vision() {
           (partySupport) => partySupport.support,
         ),
         backgroundColor: 'rgba(178,245,234, 0.2)',
-        borderColor: 'rgba(255, 99, 132, 1)',
+        borderColor: 'rgb(241,161,110)',
         borderWidth: 1,
-        hoverOffset: 4,
       },
     ],
   };

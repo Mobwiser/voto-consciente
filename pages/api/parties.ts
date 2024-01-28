@@ -45,6 +45,7 @@ export interface Idea {
   subject: Subjects;
   title: string;
   description: string;
+  info: string;
   owners: string[];
 }
 
