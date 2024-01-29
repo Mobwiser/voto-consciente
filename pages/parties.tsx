@@ -2,11 +2,10 @@ import {
   Button,
   Card,
   CardBody,
-  CardFooter,
-  CardHeader,
   Flex,
   Heading,
   Image,
+  Link,
   Stack,
   Text
 } from '@chakra-ui/react'
@@ -89,12 +88,16 @@ export default function Parties() {
                 </CardBody>
               </Stack>
               <Stack justifyContent="space-around" padding={10}>
-                <Button variant='solid' bgColor="accent" color="white">
-                    Visitar Website
-                </Button>
-                <Button variant='solid' colorScheme='blue'>
-                    Ler Programa
-                </Button>
+                <Link target="_blank" href={party.site}>
+                  <Button variant='solid' bgColor="accent" color="white">
+                      Visitar Website
+                  </Button>
+                </Link>
+                <Link target="_blank" href={party.program}>
+                  <Button variant='solid' colorScheme='blue'>
+                      Ler Programa
+                  </Button>
+                </Link>
               </Stack>
             </Card>
             ))}

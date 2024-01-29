@@ -28,11 +28,12 @@ export enum Subjects {
 }
 
 export interface Party {
-  image: string;
   name: string;
   acronym: string;
   site: string;
   slogan: string;
+  program: string;
+  image: string;
 }
 
 export enum SupportValues {
