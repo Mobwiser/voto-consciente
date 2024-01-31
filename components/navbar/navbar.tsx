@@ -27,7 +27,7 @@ import {
       {name: "Home",
       path: "/"},
       {name: "Votation",
-      path: "/"},
+      path: "/votation"},
       {name: "Partidos",
       path: "/"}
       ];
