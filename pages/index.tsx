@@ -1,4 +1,4 @@
-import { Button, Center, Flex, Heading, Link, Text, Image, Box, Stack } from '@chakra-ui/react';
+import { Button, Center, Flex, Heading, Link, Text, Image, Box, Stack, Card, CardBody } from '@chakra-ui/react';
 import Head from 'next/head';
 import Navbar from '../components/navbar/navbar';
 import Banner from '../components/banner';
@@ -51,6 +51,65 @@ const getNextDebateInfo = () => {
   return "No upcoming debates scheduled";
 };
 
+// construcao das cards do news feed
+const NewsCard = ({ item, onClick }) => (
+<Box
+  borderRadius="lg"
+  overflow="hidden"
+  p={{ base: 4, sm: 6 }}
+  bgColor="#E8E8E8"
+  maxW={{ base: 'full', sm: 'md' }} // Adjusted max width to 'md' for medium size
+  width="90%"
+  margin="auto" // Center the component by adding auto margin
+>
+    <Heading size="md" mb={4}>
+      {item.title}
+    </Heading>
+    <Text fontSize="sm" color="gray.500" mb={4}>
+      {new Date(item.pubDate).toLocaleDateString()}
+    </Text>
+    <Text fontSize="md">{item.description}</Text>
+    <Center mt={4}>
+    <Link href={item.link} isExternal>
+      <Button bg="#5966B3" color={'white'}
+              _hover={{
+                bg: '#5966C6',
+              }} size="sm">
+        Ler Mais
+      </Button>
+    </Link>
+    </Center>
+  </Box>
+);
+
+// construcao das cards dos debates
+const DebateCard = ({ debate, onClick }) => (
+  <Box
+    borderRadius="lg"
+    overflow="hidden"
+    p={{ base: 4, sm: 6 }}
+    bgColor="#E8E8E8"
+    maxW={{ base: 'full', sm: 'md' }}
+    width="90%"
+    margin="auto"
+  >
+    <Heading size="md" mb={4}>
+      {debate.title}
+    </Heading>
+    <Text fontSize="sm" color="gray.500" mb={4}>
+      {debate.channel} - {new Date(debate.datetime.seconds * 1000).toLocaleDateString()}
+    </Text>
+    <Text fontSize="md">{debate.description}</Text>
+    <Center mt={4}>
+      <Link href={debate.url} isExternal>
+        <Button bg="#5966B3" color={'white'} size="sm">
+          Assistir Debate
+        </Button>
+      </Link>
+    </Center>
+  </Box>
+);
+
   return (
     <div className={styles.container}>
       <Head>
@@ -88,6 +147,13 @@ const getNextDebateInfo = () => {
           </Heading>
         </Flex>
 
+        <Flex
+          flexDirection="column"
+          justifyContent="space-around"
+          alignItems="center"
+          w="100vw"
+          mt="15px"
+        >
         {/* Debates Section */}
         {debates.length > 0 && (
           <Box>
@@ -116,32 +182,29 @@ const getNextDebateInfo = () => {
           </Box>
           
         )}
+        </Flex>
 
-        {/* RSS Feed Section */}
-        {feedData && (
-          <Box>
-            <Heading>
-              <Center>Últimas Notícias</Center>
-            </Heading>
+        <Flex flexDirection="column" justifyContent="space-around" alignItems="center" w="100vw" mt="15px">
+      {/* RSS Feed Section */}
+      {feedData && (
+        <Box>
+          <Heading>
+            <Center>Últimas Notícias</Center>
+          </Heading>
+          <Stack spacing={10} mt={10}>
             {feedData.items.slice(0, displayedNewsItems).map((item, index) => (
-              <Center>
-              <Box key={index} borderWidth="1px" borderRadius="lg" p="4" my="4">
-                <Heading size="md">{item.title}</Heading>
-                <Text>{new Date(item.pubDate).toLocaleDateString()}</Text>
-                <Text>{item.description}</Text>
-                <Button onClick={() => (window.location.href = item.link)}>→</Button>
-              </Box>
-              </Center>
+              <NewsCard key={index} item={item} onClick={() => (window.location.href = item.link)} />
             ))}
-            {displayedNewsItems < feedData.items.length && (
-              <Center>
-                <Button onClick={loadMoreNewsItems}>Mais Notícias</Button>
-              </Center>
-            )}
-          </Box>
-        )}
+          </Stack>
+          {displayedNewsItems < feedData.items.length && (
+            <Center mt={4}>
+              <Button onClick={loadMoreNewsItems}>Mais Notícias</Button>
+            </Center>
+          )}
+        </Box>
+      )}
+    </Flex>
 
-       
        <Box>
        <Flex direction="column" align="center">
         <Heading fontSize={{ base: 'md', lg: 'lg' }} color={'gray.500'}>
@@ -174,8 +237,10 @@ const getNextDebateInfo = () => {
         <Center bg="#F1A16E" color="white">
           <Image src="logo.png" alt="Logo voto consciente" h={'100px'} />
         </Center>
+        
       </main>
     </div>
+    
   );
 };
 
