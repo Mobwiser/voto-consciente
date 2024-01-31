@@ -69,16 +69,17 @@ const Home = () => {
         {/* Display RSS Feed items */}
         {feedData && (
           <Box>
-            <h2>{feedData.title}</h2>
+            <Heading><Center>Últimas Notícias</Center></Heading>
             {feedData.items.slice(0, displayedItems).map((item, index) => (
-              <div key={index}>
-                <h3>{item.title}</h3>
-                <p>{new Date(item.pubDate).toLocaleDateString()}</p>
-                <button onClick={() => window.location.href = item.link}>Read More</button>
-              </div>
+              <Box key={index} borderWidth="1px" borderRadius="lg" p="4" my="4">
+                <Heading size="md">{item.title}</Heading>
+                <Text>{new Date(item.pubDate).toLocaleDateString()}</Text>
+                <Text>{item.description}</Text>
+                <Button onClick={() => window.location.href = item.link}>→</Button>
+              </Box>
             ))}
             {displayedItems < feedData.items.length && (
-              <Button onClick={loadMoreItems}>Load More</Button>
+              <Center><Button onClick={loadMoreItems}>Load More</Button></Center>
             )}
           </Box>
         )}
