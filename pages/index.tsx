@@ -1,21 +1,39 @@
-import {Button, Center, Flex, Heading, Link, Text, Image} from '@chakra-ui/react';
+import { Button, Center, Flex, Heading, Link, Text, Image, Box } from '@chakra-ui/react';
 import Head from 'next/head';
+import Navbar from '../components/navbar/navbar';
 import styles from '../styles/Home.module.css';
-import React from "react";
+import React, { useEffect, useState } from 'react';
 
-export default function Home() {
+const Home = () => {
+  const [feedData, setFeedData] = useState(null);
+  const [displayedItems, setDisplayedItems] = useState(5);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('/api/news');
+        const data = await response.json();
+        setFeedData(data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const loadMoreItems = () => {
+    setDisplayedItems(prev => prev + 5);
+  };
+
   return (
     <div className={styles.container}>
       <Head>
         <title>Voto consciente</title>
-        <meta
-          name="description"
-          content="Verifica a tua identidade politica de acordo com a tua visão da sociedade"
-        />
-        <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main className={styles.main}>
+        <Navbar />
         <Flex
           flexDirection="column"
           justifyContent="space-around"
@@ -48,10 +66,29 @@ export default function Home() {
             </Button>
           </Link>
         </Flex>
+        {/* Display RSS Feed items */}
+        {feedData && (
+          <Box>
+            <h2>{feedData.title}</h2>
+            {feedData.items.slice(0, displayedItems).map((item, index) => (
+              <div key={index}>
+                <h3>{item.title}</h3>
+                <p>{new Date(item.pubDate).toLocaleDateString()}</p>
+                <button onClick={() => window.location.href = item.link}>Read More</button>
+              </div>
+            ))}
+            {displayedItems < feedData.items.length && (
+              <Button onClick={loadMoreItems}>Load More</Button>
+            )}
+          </Box>
+        )}
+
         <Center bg='tomato' color='white'>
           <Image src='logo.png' alt='Logo voto consciente' h={'100px'} />
         </Center>
       </main>
     </div>
   );
-}
+};
+
+export default Home;
