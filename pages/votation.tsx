@@ -9,6 +9,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import Head from 'next/head';
+import Navbar from '../components/navbar/navbar';
 import styles from '../styles/Home.module.css';
 import {FaQuestion, FaRegGrinAlt, FaRegAngry, FaRegFrown, FaArrowDown, FaArrowUp} from 'react-icons/fa';
 import React, {useEffect, useState} from 'react';
@@ -70,6 +71,7 @@ export default function Votation() {
       </Head>
 
       <main className={styles.main}>
+      <Navbar />
         <Flex
           flexDirection="column"
           justifyContent="space-around"
