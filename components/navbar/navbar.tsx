@@ -1,20 +1,13 @@
 import {
     Box,
     Flex,
-    Avatar,
     HStack,
-    Text,
     IconButton,
-    Button,
-    Menu,
-    MenuButton,
-    MenuList,
-    MenuItem,
-    MenuDivider,
     useDisclosure,
     useColorModeValue,
     Stack,
   } from '@chakra-ui/react'
+  import { useRouter } from 'next/router';
   import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons'
   import Link from 'next/link';
   import { ReactNode } from 'react';
@@ -26,20 +19,34 @@ import {
   const Links = [
       {name: "Home",
       path: "/"},
-      {name: "Votation",
+      {name: "Votação",
       path: "/votation"},
       {name: "Partidos",
-      path: "/"}
+      path: "/parties"}
       ];
   
-  const NavLink = ({ children, path }: {children: ReactNode, path:string }) => {
-      return (
-      <Link
-        href={path}>
-        {children}
-      </Link>
-      );
-  };
+      const NavLink = ({ children, path }: { children: ReactNode, path: string }) => {
+        const { pathname } = useRouter();
+        const isActive = path === pathname;
+      
+        return (
+          <Link href={path}>
+            <Box
+              as="a"
+              color={isActive ? 'black' : 'gray.500'}
+              borderBottom={isActive ? '2px solid black' : '2px solid transparent'}
+              paddingBottom="2px"
+              cursor="pointer"
+              transition="color 0.3s ease, border-bottom 0.3s ease-in-out"
+              _hover={{
+                color: 'black',
+              }}
+            >
+              {children}
+            </Box>
+          </Link>
+        );
+      };
   
   export default function Navbar() {
     const { isOpen, onOpen, onClose } = useDisclosure()
