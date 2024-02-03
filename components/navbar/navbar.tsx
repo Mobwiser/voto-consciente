@@ -34,7 +34,9 @@ import {
             <Button
               variant="link"
               borderBottom={isActive ? '2px solid black' : '2px solid transparent'}
+              color={isActive ? 'black' : 'gray'}
               paddingBottom="2px"
+              borderRadius={0}
               cursor="pointer"
               transition="color 0.3s ease, border-bottom 0.3s ease-in-out"
               _hover={{
