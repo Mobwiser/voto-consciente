@@ -5,25 +5,17 @@ import { appFirebaseDb } from "../../firebase";
 export const partiesCollectionName = 'parties';
 
 export enum Subjects {
-  HEALTH = 'health',
-  FINANCES = 'finances',
-  SALARIES = 'salaries',
-  LABOR = 'labor',
-  EDUCATION = 'education',
-  JUSTICE = 'justice',
-  HUMAN_RIGHTS = 'humanRights',
-  ANIMAL_RIGHTS = 'animalRights',
-  FOREIGN_AFFAIRS = 'foreignAffairs',
-  PUBLIC_FINANCES = 'publicFinances',
-  TRANSPARENCY = 'transparency',
-  GOVERNMENT_ADMINISTRATION = 'governmentAdministration',
-  INTERNAL_ADMINISTRATION = 'internalAdministration',
-  ENVIRONMENT = 'environment',
-  TRANSPORTATION = 'transportation',
-  SOCIAL_WELFARE = 'socialWelfare',
-  HOUSING = 'housing',
-  CULTURE = 'culture',
-  GOVERNMENT = 'government',
+  HEALTH = 'Saúde',
+  EDUCATION = 'Educação',
+  JUSTICE = 'Justiça',
+  ENVIRONMENT_ANIMAL_WELLFARE = 'Ambiente e direitos dos animais',
+  CULTURE = 'Cultura',
+  SECURITY = 'Segurança',
+  INTERNAL_ADMINISTRATION = 'Administração interna',
+  HUMAN_RIGHTS = 'Direitos humanos',
+  MOBILITY = 'Mobilidade',
+  TAXES = 'Impostos',
+  HOUSING = 'Habitação',
 }
 
 export interface Party {
