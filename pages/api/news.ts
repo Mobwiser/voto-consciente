@@ -8,9 +8,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const parser = new Parser();
         const feed = await parser.parseURL('https://news.google.com/rss/search?q=eleicoes+legislativas+2024&hl=pt-PT&gl=PT&ceid=PT:pt-150');
 
+        // so vai buscar as ultimas x entries - neste caso 20 (alterar conforme necessario)
+        const limitedItems = feed.items.slice(0, 20);
+
         const transformedData = {
           title: feed.title,
-          items: feed.items.map(item => ({
+          items: limitedItems.map(item => ({
             title: item.title,
             pubDate: item.pubDate,
             link: item.link,
