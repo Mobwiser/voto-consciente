@@ -52,85 +52,98 @@ const Home = () => {
       // selecionar o primeiro do array sorted
       const nextDebate = sortedDebates[0];
 
+      // OPCAO 1 
       if (nextDebate) {
         const formattedDate = new Date(nextDebate.datetime.seconds * 1000).toLocaleDateString();
         return (
           <>
-            <span>{nextDebate.title}</span>
-            <br />
-            <span style={{ fontWeight: 'bold' }}>{formattedDate}</span>
+            <div style={{ marginBottom: '8px' }}>
+              <span>{nextDebate.title}</span>
+            </div>
+            <div>
+              <span style={{ fontWeight: 'bold' }}>{formattedDate}</span>
+            </div>
           </>
         );
       }
+
     }
 
     return "No upcoming debates scheduled";
   };
 
-  // construcao das cards do news feed
-  const NewsCard = ({ item, onClick }) => (
-    <Box
-      borderRadius="lg"
-      overflow="hidden"
-      p={{ base: 4, sm: 6 }}
-      bgColor="#E8E8E8"
-      maxW={{ base: 'full', sm: 'md', lg: 'lg' }}
-      width="90%"
-      margin="auto"
-    >
-      <Heading size="md" mb={4}>
-        {item.title}
-      </Heading>
-      <Flex justifyContent="space-between" alignItems="center" mb={4}>
-        <Text fontSize="sm" color="gray.500">
-          {new Date(item.pubDate).toLocaleDateString()}
-        </Text>
-        <Link href={item.link} isExternal>
-          <Button
-            bg="#5966B3"
-            color="white"
-            _hover={{
-              bg: '#5966C6',
-            }}
-            size="md"
-            borderRadius="full"
-          >
-            Ler Mais →
-          </Button>
-        </Link>
-      </Flex>
-      <Text fontSize="md">{item.description}</Text>
-    </Box>
-  );
+// construcao das cards do news feed
+const NewsCard = ({ item, onClick }) => (
+  <Box
+    borderRadius="lg"
+    overflow="hidden"
+    p={{ base: 4, sm: 6 }}
+    bgColor="#E8E8E8"
+    maxW={{ base: 'full', sm: 'md', lg: 'lg' }}
+    width="90%"
+    margin="auto"
+  >
+    <Heading size="md" mb={4}>
+      {item.title}
+    </Heading>
+    <Flex justifyContent="space-between" alignItems="center" mb={4}>
+      <Text fontSize="sm" color="gray.500">
+        {new Date(item.pubDate).toLocaleDateString()}
+      </Text>
+      <Link href={item.link} isExternal>
+        <Button
+          bg="#5966B3"
+          color="white"
+          _hover={{
+            bg: '#5966C6',
+          }}
+          size="md"
+          borderRadius="full"
+        >
+          Ler Mais →
+        </Button>
+      </Link>
+    </Flex>
+  </Box>
+);
+
 
   // construcao das cards dos debates - nao e necessario passar logos mas falta implementar logica correta
-  const DebateCard = ({ debate, party1Logo, party2Logo }) => (
+  const DebateCard = ({ debate, party1Logo, party2Logo, isFirst }) => (
     <Box
       borderRadius="lg"
       overflow="hidden"
       p={{ base: 4, sm: 6 }}
-      bgColor="#E8E8E8"
+      bgColor={isFirst ? "#fab182" : "#f2f2f2"} // Different background color for the first card
       maxW={{ base: 'full', sm: 'md', lg: 'lg' }}
       width="90%"
       margin="auto"
+      mt={5}
     >
+    {isFirst && (
+      <Heading fontSize="x-large" color={'black'} fontWeight={'bold'} mb={4} textAlign={'center'}>
+        Próximo Debate:
+      </Heading>
+    )}
+
       <Flex alignItems="center" mb={4}>
-        <Image src={party1Logo} alt="Party 1 Logo" boxSize="100px" mr={2} />
+        <Image src={party1Logo} alt="Party 1 Logo" boxSize="80px" mr={2} />
         <Center>
           <Stack>
-            <Heading size="md" textAlign="center">
+            <Heading size="sm" textAlign="center">
               {debate.title}
             </Heading>
-            <Text fontSize="sm" fontWeight="bold" color="gray.500" textAlign="center">
+            <Text fontSize="md" fontWeight="bold" color="gray.500" textAlign="center" mt={2}>
               {new Date(debate.datetime.seconds * 1000).toLocaleDateString()}
             </Text>
-            <Center mt={4}>
+            <Center mt={2}>
+            {debate.url ? ( // Check if the url field exists
               <Link href={debate.url} isExternal>
                 <Button
                   bg="#5966B3"
                   color={'white'}
-                  size="md" // Increased button size
-                  borderRadius="full" // Added more roundness
+                  size="md" 
+                  borderRadius="full" 
                   _hover={{
                     bg: '#5966C6',
                   }}
@@ -138,10 +151,11 @@ const Home = () => {
                   Assistir Debate
                 </Button>
               </Link>
+            ) : null}
             </Center>
           </Stack>
         </Center>
-        <Image src={party2Logo} alt="Party 2 Logo" boxSize="100px" ml={2} />
+        <Image src={party2Logo} alt="Party 2 Logo" boxSize="80px" ml={2} />
       </Flex>
     </Box>
   );
@@ -167,48 +181,51 @@ const Home = () => {
 
         {/* explanation small header */}
         <Flex flexDirection="column" alignItems="center">
-          <Heading
-            size="md"
-            color="white"
-            bgColor="accent"
-            p={2}
-            w={'100vw'}
-            textAlign="center"
-          >
-            Explora o teu alinhamento político através de um teste que compara as tuas
-            opiniões com as ideias de partidos parlamentares.
-          </Heading>
+          <Box mt={5} p={4} bgColor="accent">
+            <Heading
+              size="md"
+              color="white"
+              p={2}
+              w={'100vw'}
+              textAlign="center"
+            >
+              Explora o teu alinhamento político através de um teste que compara as tuas
+              opiniões com as ideias dos diferentes partidos parlamentares.
+            </Heading>
+          </Box>
         </Flex>
 
-        {/* Debates Section */}
-        <Flex flexDirection="column" justifyContent="space-around" alignItems="center" w="100vw" mt="15px">
-          {debates.length > 0 && (
-            <Box mt={5}>
-              <Heading>
-                <Center>Debates em Destaque</Center>
-              </Heading>
-              <br></br>
-              {/* proximo debate section */}
-              <Text textAlign={'center'} color={'#5966B3'} fontWeight={'bold'}>Próximo Debate:</Text>
-              <Text textAlign={'center'}>{getNextDebateInfo()}</Text>
-              <br></br>
-              {debates.slice(0, displayedDebateItems).map((debate, index) => (
-                <Center key={index}>
-                  <DebateCard
-                    debate={debate}
-                    party1Logo="logo.png"  // placeholder
-                    party2Logo="logo.png"  // placeholder
-                  />
-                </Center>
-              ))}
-              {displayedDebateItems < debates.length && (
-                <Center>
-                  <Button onClick={loadMoreDebateItems}>Mais Debates</Button>
-                </Center>
-              )}
-            </Box>
-          )}
-        </Flex>
+       {/* Debates Section */}
+<Flex flexDirection="column" justifyContent="space-around" alignItems="center" w="100vw" mt="15px">
+  {debates.length > 0 && (
+    <Box mt={5}>
+      <Heading>
+        <Center>Debates em Destaque</Center>
+      </Heading>
+      <br />
+
+      {/* Render the debate cards */}
+      {debates.slice(0, displayedDebateItems).map((debate, index) => (
+        <Center key={index}>
+          <DebateCard
+            debate={debate}
+            party1Logo="logo.png"
+            party2Logo="logo.png"
+            isFirst={index === 0} // Pass a prop to identify the first card
+          />
+        </Center>
+      ))}
+      {displayedDebateItems < debates.length && (
+        <Center mt={4}>
+          <Button onClick={loadMoreDebateItems} borderRadius="full">
+            Mais Debates
+          </Button>
+        </Center>
+      )}
+    </Box>
+  )}
+</Flex>
+
 
         {/* News Section */}
         <Flex flexDirection="column" justifyContent="space-around" alignItems="center" w="100vw" mt="15px">
@@ -232,8 +249,7 @@ const Home = () => {
               </Stack>
               {displayedNewsItems < feedData.items.length && (
                 <Center mt={4}>
-                  <Button onClick={loadMoreNewsItems} borderRadius="full"
-                  >Mais Notícias</Button>
+                  <Button onClick={loadMoreNewsItems} borderRadius="full">Mais Notícias</Button>
                 </Center>
               )}
             </Box>
@@ -243,7 +259,7 @@ const Home = () => {
         {/* CTA bottom section */}
         <Box mt={5} p={5}>
           <Flex direction="column" align="center">
-            <Heading fontSize={{ base: 'md', lg: 'lg' }} color={'gray.500'} textAlign={'center'}>
+            <Heading fontSize={{ base: 'md', lg: 'lg' }} color={'black'} textAlign={'center'}>
               Verifica a tua compatibilidade com os diferentes partidos políticos com assento parlamentar aqui.
             </Heading>
             <br></br>
@@ -261,16 +277,6 @@ const Home = () => {
           </Flex>
         </Box>
 
-        {/* mobwiser credits */}
-        <Box mt={5} p={5}>
-          <Center>
-            <Flex direction="column" align="center">
-              <Image src="mobwiser_logo.jpg" alt="Logo voto consciente" h={'200px'} />
-              <br></br>
-              <Heading fontSize={{ base: 'md', lg: 'lg' }} color="primary" fontWeight={'bold'}>Desenvolvido @ Mobwiser</Heading>
-            </Flex>
-          </Center>
-        </Box>
 
         {/* MyEuribor ad section*/}
         <Box mt={5} p={5} bgColor="#2596be">
@@ -303,6 +309,17 @@ const Home = () => {
               </Link>
             </Box>
           </Flex>
+        </Box>
+
+        {/* mobwiser credits */}
+        <Box mt={5} p={5}>
+          <Center>
+            <Flex direction="column" align="center">
+              <Image src="mobwiser_logo.jpg" alt="Logo voto consciente" h={'200px'} />
+              <br></br>
+              <Heading fontSize={{ base: 'md', lg: 'lg' }} color="primary" fontWeight={'bold'}>Desenvolvido @ Mobwiser</Heading>
+            </Flex>
+          </Center>
         </Box>
 
 
