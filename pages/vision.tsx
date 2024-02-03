@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import {useAppContext} from '../context/AppContext';
 import {Radar} from 'react-chartjs-2';
-import {Idea, Party} from './api/parties';
+import {Idea, Party, SupportValues} from './api/parties';
 import {
   Flex,
   Heading,
@@ -21,7 +21,7 @@ interface PartySupport {
 export default function Vision() {
   const [appState] = useAppContext();
   const [parties, setParties] = useState<Party[]>();
-  const [ideas, setIdeas] = useState(appState.ideas);
+  const [ideas] = useState(appState.ideas);
   const router = useRouter();
   const vision: Record<number, number> | undefined = appState.vision;
 
@@ -50,12 +50,27 @@ export default function Vision() {
 
   Object.keys(vision).forEach((ideaId: string) => {
     const idea: Idea = ideas[ideaId];
+    const opinion = vision[ideaId];
     parties.forEach((party) => {
       if(idea.owners.includes(party.acronym)) {
-        partySupport[party.acronym].support += 1;
+        switch (opinion) {
+          case SupportValues.FAVOR:
+            partySupport[party.acronym].support += 1;
+            break;
+          case SupportValues.AGAINST:
+            partySupport[party.acronym].support -= 1;
+            break;
+          case SupportValues.BLOCKER:
+            partySupport[party.acronym].support -= 2;
+            break;
+          default:
+              partySupport[party.acronym].support += 0;
+              break;
+        }
       }
     })
   });
+
 
   const partySupportArray = Object.values(partySupport).sort(
     (a, b) => b.support - a.support,

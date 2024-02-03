@@ -1,17 +1,15 @@
 import {
-  Box,
   Button,
   Flex,
   Heading,
   Icon,
-  IconButton,
-  Progress,
+  Progress, Tag,
   Text,
 } from '@chakra-ui/react';
 import Head from 'next/head';
 import Navbar from '../components/navbar/navbar';
 import styles from '../styles/Home.module.css';
-import {FaQuestion, FaRegGrinAlt, FaRegAngry, FaRegFrown, FaArrowDown, FaArrowUp} from 'react-icons/fa';
+import {FaQuestion, FaRegGrinAlt, FaRegAngry, FaRegFrown} from 'react-icons/fa';
 import React, {useEffect, useState} from 'react';
 import {Idea, SupportValues} from './api/parties';
 import {useRouter} from 'next/router';
@@ -38,8 +36,6 @@ export default function Votation() {
     handleVoteValue(idea, vote);
   };
 
-  const toggleIsOpen = () => setIsOpen(!isOpen);
-
   const handleVoteValue = (idea: Idea, support: SupportValues) => {
     setAppState((prevState) => ({
       ...prevState,
@@ -57,7 +53,6 @@ export default function Votation() {
   };
 
   const currentIdea: () => Idea = () => ideas[ideaIndex];
-  const showInfo = (index) => ideaIndex === index && isOpen;
 
   return (
     <div className={styles.container}>
@@ -122,8 +117,6 @@ export default function Votation() {
                       </Heading>
                       <Flex
                           flexDirection={"column"}
-                          alignItems={"center"}
-                          justifyContent={"space-between"}
                           bg="primary"
                           w="90vw"
                           minH="200px"
@@ -133,24 +126,17 @@ export default function Votation() {
                           border="2px"
                           borderRadius="3px"
                           fontSize="22px"
-                          textAlign="center"
+                          position={'relative'}
                       >
-                        <Text color="black" mt={15}>
+                        <Tag size={'lg'} variant='solid' colorScheme='black' position={'absolute'} top={0} right={0}>
+                          {idea.subject}
+                        </Tag>
+                        <Text color="black" mt={15} fontWeight={'bold'} fontSize={'1.2rem'}>
                           {idea.description}
                         </Text>
 
-                        {showInfo(index) && (<IconButton aria-label='Show info'
-                                    icon={<Icon as={FaArrowUp} color="white" w={6} h={6}></Icon>}
-                                    onClick={toggleIsOpen}
-                        />)}
-                        {!showInfo(index) && (<IconButton aria-label='Hide info'
-                                                         icon={<Icon as={FaArrowDown} color="white" w={6} h={6}></Icon>}
-                                                         onClick={toggleIsOpen}
-                        />)}
+                        <Text color={'black'} mt={8} fontSize={'1rem'}>{idea.info}</Text>
                       </Flex>
-                      {showInfo(index) && (<Box bgColor={"lightgrey"}  w="90vw" p={"1rem"} color={"black"}>
-                        {idea.info}
-                      </Box>)}
                     </Flex>
 
                 ),
