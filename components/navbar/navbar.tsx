@@ -5,8 +5,8 @@ import {
     IconButton,
     useDisclosure,
     useColorModeValue,
-    Stack,
-  } from '@chakra-ui/react'
+    Stack, Button,
+} from '@chakra-ui/react'
   import { useRouter } from 'next/router';
   import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons'
   import Link from 'next/link';
@@ -30,10 +30,9 @@ import {
         const isActive = path === pathname;
       
         return (
-          <Link href={path}>
-            <Box
-              as="a"
-              color={isActive ? 'black' : 'gray.500'}
+          <Link href={path} >
+            <Button
+              variant="link"
               borderBottom={isActive ? '2px solid black' : '2px solid transparent'}
               paddingBottom="2px"
               cursor="pointer"
@@ -43,7 +42,7 @@ import {
               }}
             >
               {children}
-            </Box>
+            </Button>
           </Link>
         );
       };

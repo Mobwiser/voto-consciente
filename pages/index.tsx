@@ -1,4 +1,4 @@
-import { Button, Center, Flex, Heading, Link, Text, Image, Box, Stack, Card, CardBody } from '@chakra-ui/react';
+import { Button, Center, Flex, Heading, Link, Text, Image, Box, Stack, } from '@chakra-ui/react';
 import Head from 'next/head';
 import Navbar from '../components/navbar/navbar';
 import Banner from '../components/banner';
