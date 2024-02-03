@@ -10,7 +10,7 @@ import {
 
 export default function Banner() {
   return (
-    <Stack direction={{ base: 'column', md: 'row' }} spacing={4} maxH={{ base: 'unset', md: '40vh' }}>
+    <Stack mt={5} direction={{ base: 'column', md: 'row' }} spacing={4} maxH={{ base: 'unset', md: '40vh' }}>
       <Flex p={8} flex={1} align={'center'} justify={'center'}>
         <Stack spacing={6} w={'full'} maxW={'lg'}>
           <Heading fontSize={{ base: '3xl', md: '4xl', lg: '5xl' }}>
@@ -18,7 +18,7 @@ export default function Banner() {
               Verifica o teu posicionamento de acordo com a visão que tens da sociedade.
             </Text>
           </Heading>
-          <Text fontSize={{ base: 'md', lg: 'lg' }} color={'gray.500'} textAlign="center">
+          <Text fontSize={{ base: 'lg', lg: 'lg' }} color={'gray.500'} fontWeight={'bold'} textAlign="center">
             Descobre com que partido fazes match.
           </Text>
           <Stack direction={{ base: 'column', md: 'row' }} spacing={4} justifyContent={'center'} align={'center'}>
@@ -27,6 +27,7 @@ export default function Banner() {
                 rounded={'full'}
                 bg={'#5966B3'}
                 color={'white'}
+                size="lg"
                 _hover={{
                   bg: '#5966C6',
                 }}>
