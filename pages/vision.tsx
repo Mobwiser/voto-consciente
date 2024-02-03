@@ -96,13 +96,15 @@ export default function Vision() {
     ],
   };
 
-  const getTopMatchingParty = (): PartySupport | undefined => {
+  const getTopMatchingParties = (): PartySupport[] => {
     if (partySupportArray.length > 0) {
-      return partySupportArray[0];
+      const maxSupport = Math.max(...partySupportArray.map(partySupport => partySupport.support));
+      return partySupportArray.filter(partySupport => partySupport.support === maxSupport);
     }
-    return undefined;
+    return [];
   };
-  const topMatchingParty = getTopMatchingParty();
+
+  const topMatchingParties = getTopMatchingParties();
 
   return (
     <div>
@@ -135,7 +137,7 @@ export default function Vision() {
             Visão da sociedade
           </Heading>
 
-          {topMatchingParty && (
+          {topMatchingParties.length > 0 && (
             <Box
               borderRadius="lg"
               overflow="hidden"
@@ -146,14 +148,22 @@ export default function Vision() {
               margin="auto"
               mt={5}
             >
-                <Heading size="sm" textAlign="center">
-                  O partido com que mais se identifica é:
-                </Heading>
-                <Text fontSize="lg" fontWeight="bold" color="gray.500" textAlign="center" mt={2}>
-                  {topMatchingParty.name}
-                </Text>
+
+              <Heading size="sm" textAlign="center">
+                O(s) partido(s) com que mais se identifica:
+              </Heading>
+              <Text fontSize="md" fontWeight="bold" color="gray.500" textAlign="center" mt={2}>
+                {topMatchingParties.map((partySupport, index) => (
+                  <span key={`top_party_${index}`}>
+                    {index > 0 && ', '}
+                    {partySupport.name}
+                  </span>
+                ))}
+              </Text>
+
             </Box>
           )}
+
 
           <Heading
             color="accent"
