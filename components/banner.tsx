@@ -39,13 +39,11 @@ export default function Banner() {
       </Flex>
       <Flex flex={1} overflow={'hidden'}>
         <Image
-          alt={'Login Image'}
+          alt={'votação'}
           objectFit={'cover'}
-          maxH={{ base: '50vh', md: '100%' }} // Adjusted max height for responsiveness
           maxW={'100%'}
-          src={
-            'votacao_img.jpg'
-          }
+          w={'100vw'}
+          src={'votacao_img.jpg'}
         />
       </Flex>
     </Stack>
