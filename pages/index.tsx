@@ -12,26 +12,29 @@ const Home = () => {
   const [displayedDebateItems, setDisplayedDebateItems] = useState(3);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('/api/news');
-        const data = await response.json();
-        setFeedData(data);
-      } catch (error) {
-        console.error('Error fetching news data:', error);
-      }
+    const fetchData = () => {
+      fetch('/api/news')
+        .then((response) => response.json())
+        .then((data) => {
+          setFeedData(data);
+        })
+        .catch((error) => {
+          console.error('Error fetching news data:', error);
+        });
 
-      try {
-        const debatesResponse = await fetch('/api/debates');
-        const debatesData = await debatesResponse.json();
-        setDebates(debatesData);
-      } catch (error) {
-        console.error('Error fetching debates data:', error);
-      }
+      fetch('/api/debates')
+        .then((debatesResponse) => debatesResponse.json())
+        .then((debatesData) => {
+          setDebates(debatesData);
+        })
+        .catch((error) => {
+          console.error('Error fetching debates data:', error);
+        });
     };
 
     fetchData();
   }, []);
+
 
   const loadMoreNewsItems = () => {
     setDisplayedNewsItems(prev => prev + 5);
@@ -41,71 +44,40 @@ const Home = () => {
     setDisplayedDebateItems(prev => prev + 3);
   };
 
-  // logica nao funciona se adicionarmos logo todas as datas de debates - se for assim temos de ver
-  // qual deles tem a data mais proxima a current.date mas sempre para a frente
-  // ordenar debates para pegar o proximo - has to be the last added
-  const getNextDebateInfo = () => {
-    if (debates.length > 0) {
-      // ordenando do mais recente para o mais antigo
-      const sortedDebates = debates.sort((a, b) => b.datetime.seconds - a.datetime.seconds);
-
-      // selecionar o primeiro do array sorted
-      const nextDebate = sortedDebates[0];
-
-      // OPCAO 1 
-      if (nextDebate) {
-        const formattedDate = new Date(nextDebate.datetime.seconds * 1000).toLocaleDateString();
-        return (
-          <>
-            <div style={{ marginBottom: '8px' }}>
-              <span>{nextDebate.title}</span>
-            </div>
-            <div>
-              <span style={{ fontWeight: 'bold' }}>{formattedDate}</span>
-            </div>
-          </>
-        );
-      }
-
-    }
-
-    return "No upcoming debates scheduled";
-  };
-
-// construcao das cards do news feed
-const NewsCard = ({ item, onClick }) => (
-  <Box
-    borderRadius="lg"
-    overflow="hidden"
-    p={{ base: 4, sm: 6 }}
-    bgColor="#E8E8E8"
-    maxW={{ base: 'full', sm: 'md', lg: 'lg' }}
-    width="90%"
-    margin="auto"
-  >
-    <Heading size="md" mb={4}>
-      {item.title}
-    </Heading>
-    <Flex justifyContent="space-between" alignItems="center" mb={4}>
-      <Text fontSize="sm" color="gray.500">
-        {new Date(item.pubDate).toLocaleDateString()}
-      </Text>
-      <Link href={item.link} isExternal>
-        <Button
-          bg="#5966B3"
-          color="white"
-          _hover={{
-            bg: '#5966C6',
-          }}
-          size="md"
-          borderRadius="full"
-        >
-          Ler Mais →
-        </Button>
-      </Link>
-    </Flex>
-  </Box>
-);
+  // construcao das cards do news feed
+  const NewsCard = ({ item, onClick }) => (
+    <Box
+      borderRadius="lg"
+      overflow="hidden"
+      p={{ base: 4, sm: 6 }}
+      bgColor="#E8E8E8"
+      maxW={{ base: 'full', sm: 'md', lg: 'lg' }}
+      width="90%"
+      margin="auto"
+    >
+      <Heading size="md" mb={4}>
+        {item.title}
+      </Heading>
+      <Flex justifyContent="space-between" alignItems="center" mb={4}>
+        <Text fontSize="sm" color="gray.500">
+          {new Date(item.pubDate).toLocaleDateString()}
+        </Text>
+        <Link href={item.link} isExternal>
+          <Button
+            bg="#5966B3"
+            color="white"
+            _hover={{
+              bg: '#5966C6',
+            }}
+            size="md"
+            borderRadius="full"
+          >
+            Ler Mais →
+          </Button>
+        </Link>
+      </Flex>
+    </Box>
+  );
 
 
   // construcao das cards dos debates - nao e necessario passar logos mas falta implementar logica correta
@@ -120,11 +92,11 @@ const NewsCard = ({ item, onClick }) => (
       margin="auto"
       mt={5}
     >
-    {isFirst && (
-      <Heading fontSize="x-large" color={'black'} fontWeight={'bold'} mb={4} textAlign={'center'}>
-        Próximo Debate:
-      </Heading>
-    )}
+      {isFirst && (
+        <Heading fontSize="x-large" color={'black'} fontWeight={'bold'} mb={4} textAlign={'center'}>
+          Próximo Debate:
+        </Heading>
+      )}
 
       <Flex alignItems="center" mb={4}>
         <Image src={party1Logo} alt="Party 1 Logo" boxSize="80px" mr={2} />
@@ -133,25 +105,29 @@ const NewsCard = ({ item, onClick }) => (
             <Heading size="sm" textAlign="center">
               {debate.title}
             </Heading>
+
             <Text fontSize="md" fontWeight="bold" color="gray.500" textAlign="center" mt={2}>
-              {new Date(debate.datetime.seconds * 1000).toLocaleDateString()}
+              Canal: {debate.channel}<br />
+              {new Date(debate.datetime.seconds * 1000).toLocaleTimeString('pt-BR', { timeStyle: 'short' })}<br />
+              {new Date(debate.datetime.seconds * 1000).toLocaleDateString('pt-BR', { dateStyle: 'short' })}
             </Text>
+
             <Center mt={2}>
-            {debate.url ? ( // Check if the url field exists
-              <Link href={debate.url} isExternal>
-                <Button
-                  bg="#5966B3"
-                  color={'white'}
-                  size="md" 
-                  borderRadius="full" 
-                  _hover={{
-                    bg: '#5966C6',
-                  }}
-                >
-                  Assistir Debate
-                </Button>
-              </Link>
-            ) : null}
+              {debate.url ? ( // Check if the url field exists
+                <Link href={debate.url} isExternal>
+                  <Button
+                    bg="accent"
+                    color={'white'}
+                    size="md"
+                    borderRadius="full"
+                    _hover={{
+                      bg: '#5966C6',
+                    }}
+                  >
+                    Assistir Debate
+                  </Button>
+                </Link>
+              ) : null}
             </Center>
           </Stack>
         </Center>
@@ -159,6 +135,7 @@ const NewsCard = ({ item, onClick }) => (
       </Flex>
     </Box>
   );
+
 
   return (
     <div className={styles.container}>
@@ -171,17 +148,19 @@ const NewsCard = ({ item, onClick }) => (
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
+      
       <main className={styles.main}>
+        
         <Navbar />
 
         {/* Banner Section */}
-        <Flex align="center" justify="center">
+        <Flex align="center" justify="center" w="100vw">
           <Banner />
         </Flex>
 
         {/* explanation small header */}
         <Flex flexDirection="column" alignItems="center">
-          <Box mt={5} p={4} bgColor="accent">
+          <Box mt={5} p={4} bgColor="primary">
             <Heading
               size="md"
               color="white"
@@ -195,36 +174,43 @@ const NewsCard = ({ item, onClick }) => (
           </Box>
         </Flex>
 
-       {/* Debates Section */}
-<Flex flexDirection="column" justifyContent="space-around" alignItems="center" w="100vw" mt="15px">
-  {debates.length > 0 && (
-    <Box mt={5}>
-      <Heading>
-        <Center>Debates em Destaque</Center>
-      </Heading>
-      <br />
+        {/* Debates Section */}
+        <Flex flexDirection="column" justifyContent="space-around" alignItems="center" w="100vw" mt="15px">
+          {debates.length > 0 && (
+            <Box mt={5}>
+              <Heading>
+                <Center>Debates em Destaque</Center>
+              </Heading>
+              <br />
 
-      {/* Render the debate cards */}
-      {debates.slice(0, displayedDebateItems).map((debate, index) => (
-        <Center key={index}>
-          <DebateCard
-            debate={debate}
-            party1Logo="logo.png"
-            party2Logo="logo.png"
-            isFirst={index === 0} // Pass a prop to identify the first card
-          />
-        </Center>
-      ))}
-      {displayedDebateItems < debates.length && (
-        <Center mt={4}>
-          <Button onClick={loadMoreDebateItems} borderRadius="full">
-            Mais Debates
-          </Button>
-        </Center>
-      )}
-    </Box>
-  )}
-</Flex>
+              {/* Implementar lógica de ir atualizando as informações dos debates para não mostrar aqueles que já passsaram */}
+              {debates
+                .slice(0, displayedDebateItems)
+                .sort((a, b) => {
+                  const dateA = new Date(a.datetime.seconds * 1000);
+                  const dateB = new Date(b.datetime.seconds * 1000);
+                  return dateA.getTime() - dateB.getTime(); // confirmar se o sort está correto
+                })
+                .map((debate, index) => (
+                  <Center key={index}>
+                    <DebateCard
+                      debate={debate}
+                      party1Logo="logo.png"
+                      party2Logo="logo.png"
+                      isFirst={index === 0} // identifição do primeiro card
+                    />
+                  </Center>
+                ))}
+              {displayedDebateItems < debates.length && (
+                <Center mt={4}>
+                  <Button onClick={loadMoreDebateItems} borderRadius="full">
+                    Mais Debates
+                  </Button>
+                </Center>
+              )}
+            </Box>
+          )}
+        </Flex>
 
 
         {/* News Section */}
