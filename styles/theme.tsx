@@ -14,7 +14,7 @@ const theme = extendTheme({
   },
   colors: {
     primary: '#F1A16E',
-    accent: '#F1A16E',
+    accent: '#5966B3',
     emojies: {
       favor: '#8bc68b',
       against: '#fbbd50',
