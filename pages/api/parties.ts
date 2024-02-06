@@ -8,7 +8,7 @@ export enum Subjects {
   HEALTH = 'Saúde',
   EDUCATION = 'Educação',
   JUSTICE = 'Justiça',
-  ENVIRONMENT_ANIMAL_WELLFARE = 'Ambiente e direitos dos animais',
+  ENVIRONMENT = 'Ambiente',
   CULTURE = 'Cultura',
   SECURITY = 'Segurança',
   INTERNAL_ADMINISTRATION = 'Administração interna',
@@ -30,15 +30,6 @@ export enum SupportValues {
   AGAINST = 'against',
   ABSTAIN = 'abstain',
   BLOCKER = 'blocker',
-}
-
-export interface Idea {
-  id: number;
-  subject: Subjects;
-  title: string;
-  description: string;
-  info: string;
-  owners: string[];
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

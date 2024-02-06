@@ -11,6 +11,7 @@ const theme = extendTheme({
   },
   config: {
     initialColorMode: 'light',
+    useSystemColorMode: false,
   },
   colors: {
     primary: '#F1A16E',

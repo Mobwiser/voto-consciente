@@ -1,18 +1,20 @@
 import Head from 'next/head';
 import {useAppContext} from '../context/AppContext';
 import {Radar} from 'react-chartjs-2';
-import {Idea, Party, SupportValues} from './api/parties';
+import {Party, SupportValues} from './api/parties';
 import {
+  Button,
   Flex,
-  Heading,
+  Heading, Link,
   Stat,
   StatArrow,
   StatHelpText,
   StatLabel,
   StatNumber,
 } from '@chakra-ui/react';
-import {useEffect, useState } from 'react';
+import React, {useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import {Idea} from "./api/ideas";
 
 interface PartySupport {
   name: string;
@@ -43,7 +45,6 @@ export default function Vision() {
     {},
   )
 
-  console.log(vision);
   if(!vision) {
     router.push('/votation');
   }
@@ -156,6 +157,11 @@ export default function Vision() {
             Radar de compatibilidade
           </Heading>
           <Radar data={data} />
+          <Link href="/votation">
+            <Button colorScheme="teal" variant="outline">
+              Recomeçar
+            </Button>
+          </Link>
         </Flex>
       </main>
     </div>
