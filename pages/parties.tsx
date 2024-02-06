@@ -13,6 +13,7 @@ import {useEffect, useState} from 'react';
 
 import Head from 'next/head';
 import {Party} from './api/parties';
+import Navbar from '../components/navbar/navbar';
 
 export default function Parties() {
   const [parties, setParties] = useState<Party[]>();
@@ -39,6 +40,7 @@ export default function Parties() {
       </Head>
 
       <main>
+      <Navbar />
         <Flex
           flexDirection="column"
           justifyContent="space-around"
@@ -49,7 +51,7 @@ export default function Parties() {
           <Heading
             size="lg"
             color="white"
-            bgColor="accent"
+            bgColor="primary"
             p={2}
             w={'100vw'}
             textAlign="center"
@@ -64,14 +66,7 @@ export default function Parties() {
               overflow='hidden'
               variant='filled'
             >
-              {party.image && (<Image
-                objectFit='cover'
-                width={100}
-                height={100}
-                src={party.image}
-                alt={party.acronym}
-              />)}
-
+              <Image src={`parties/${party.logo}`} alt={`${party.name} Logo`} boxSize="10rem" ml={2} borderRadius={4} />
               <Stack>
                 <CardBody>
                   <Heading size='md'>{party.acronym}</Heading>
@@ -89,12 +84,12 @@ export default function Parties() {
               </Stack>
               <Stack justifyContent="space-around" padding={10}>
                 <Link target="_blank" href={party.site}>
-                  <Button variant='solid' bgColor="accent" color="white">
+                  <Button variant='solid' bgColor="primary" color="white">
                       Visitar Website
                   </Button>
                 </Link>
                 <Link target="_blank" href={party.program}>
-                  <Button variant='solid' colorScheme='blue'>
+                  <Button variant='solid' bgColor="accent" colorScheme='blue'>
                       Ler Programa
                   </Button>
                 </Link>
