@@ -220,7 +220,7 @@ const Home = () => {
                     return dateB.getTime() - dateA.getTime(); // Sort by publication date (most recent first)
                   })
                   .map((item, index) => (
-                    <NewsCard key={index} item={item} onClick={() => (window.location.href = item.link)} />
+                    <NewsCard key={index} item={item} />
                   ))}
 
               </Stack>
