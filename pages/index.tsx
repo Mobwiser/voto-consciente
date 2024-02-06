@@ -1,4 +1,4 @@
-import { Button, Center, Flex, Heading, Link, Text, Image, Box, Stack, } from '@chakra-ui/react';
+import { Button, Center, Flex, Heading, Link, Text, Image, Box, Stack } from '@chakra-ui/react';
 import Head from 'next/head';
 import Navbar from '../components/navbar/navbar';
 import Banner from '../components/banner';
@@ -35,7 +35,6 @@ const Home = () => {
     fetchData();
   }, []);
 
-
   const loadMoreNewsItems = () => {
     setDisplayedNewsItems(prev => prev + 5);
   };
@@ -44,7 +43,6 @@ const Home = () => {
     setDisplayedDebateItems(prev => prev + 3);
   };
 
-  // construcao das cards do news feed
   const NewsCard = ({ item, onClick }) => (
     <Box
       borderRadius="lg"
@@ -66,9 +64,7 @@ const Home = () => {
           <Button
             bg="#5966B3"
             color="white"
-            _hover={{
-              bg: '#5966C6',
-            }}
+            _hover={{ bg: '#5966C6' }}
             size="md"
             borderRadius="full"
           >
@@ -79,14 +75,12 @@ const Home = () => {
     </Box>
   );
 
-
-  // construcao das cards dos debates - nao e necessario passar logos mas falta implementar logica correta
   const DebateCard = ({ debate, party1Logo, party2Logo, isFirst }) => (
     <Box
       borderRadius="lg"
       overflow="hidden"
       p={{ base: 4, sm: 6 }}
-      bgColor={isFirst ? "#fab182" : "#f2f2f2"} // Different background color for the first card
+      bgColor={isFirst ? "#fab182" : "#f2f2f2"}
       maxW={{ base: 'full', sm: 'md', lg: 'lg' }}
       width="90%"
       margin="auto"
@@ -97,7 +91,6 @@ const Home = () => {
           Próximo Debate:
         </Heading>
       )}
-
       <Flex alignItems="center" mb={4}>
         <Image src={party1Logo} alt="Party 1 Logo" boxSize="80px" mr={2} />
         <Center>
@@ -105,24 +98,20 @@ const Home = () => {
             <Heading size="sm" textAlign="center">
               {debate.title}
             </Heading>
-
             <Text fontSize="md" fontWeight="bold" color="gray.500" textAlign="center" mt={2}>
               Canal: {debate.channel}<br />
               {new Date(debate.datetime.seconds * 1000).toLocaleTimeString('pt-BR', { timeStyle: 'short' })}<br />
               {new Date(debate.datetime.seconds * 1000).toLocaleDateString('pt-BR', { dateStyle: 'short' })}
             </Text>
-
             <Center mt={2}>
-              {debate.url ? ( // Check if the url field exists
+              {debate.url ? (
                 <Link href={debate.url} isExternal>
                   <Button
-                    bg="accent"
+                    bg="#5966B3"
                     color={'white'}
                     size="md"
                     borderRadius="full"
-                    _hover={{
-                      bg: '#5966C6',
-                    }}
+                    _hover={{ bg: '#5966C6' }}
                   >
                     Assistir Debate
                   </Button>
@@ -136,46 +125,32 @@ const Home = () => {
     </Box>
   );
 
-
   return (
     <div className={styles.container}>
       <Head>
         <title>Voto consciente</title>
-        <meta
-          name="description"
-          content="Verifica a tua identidade politica de acordo com a tua visão da sociedade"
-        />
+        <meta name="description" content="Verifica a tua identidade politica de acordo com a tua visão da sociedade" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      
       <main className={styles.main}>
-        
         <Navbar />
 
-        {/* Banner Section */}
         <Flex align="center" justify="center" w="100vw">
           <Banner />
         </Flex>
 
-        {/* explanation small header */}
-        <Flex flexDirection="column" alignItems="center">
-          <Box mt={5} p={4} bgColor="primary">
-            <Heading
-              size="md"
-              color="white"
-              p={2}
-              w={'100vw'}
-              textAlign="center"
-            >
+        <Flex flexDirection="column" alignItems="center" w="100vw">
+          <Box mt={5} p={4} bgColor="primary" w="100%">
+            <Heading size="md" color="white" p={2} textAlign="center">
               Explora o teu alinhamento político através de um teste que compara as tuas
               opiniões com as ideias dos diferentes partidos parlamentares.
             </Heading>
           </Box>
         </Flex>
 
-        {/* Debates Section */}
         <Flex flexDirection="column" justifyContent="space-around" alignItems="center" w="100vw" mt="15px">
+          {/* Debates section */}
           {debates.length > 0 && (
             <Box mt={5}>
               <Heading>
@@ -212,9 +187,8 @@ const Home = () => {
           )}
         </Flex>
 
-
-        {/* News Section */}
         <Flex flexDirection="column" justifyContent="space-around" alignItems="center" w="100vw" mt="15px">
+          {/* News section */}
           {feedData && (
             <Box mt={5}>
               <Heading>
@@ -242,8 +216,8 @@ const Home = () => {
           )}
         </Flex>
 
-        {/* CTA bottom section */}
-        <Box mt={5} p={5}>
+        <Box mt={5} p={5} w="100vw">
+          {/* CTA section */}
           <Flex direction="column" align="center">
             <Heading fontSize={{ base: 'md', lg: 'lg' }} color={'black'} textAlign={'center'}>
               Verifica a tua compatibilidade com os diferentes partidos políticos com assento parlamentar aqui.
@@ -263,9 +237,8 @@ const Home = () => {
           </Flex>
         </Box>
 
-
-        {/* MyEuribor ad section*/}
-        <Box mt={5} p={5} bgColor="#2596be">
+        <Box mt={5} p={5} bgColor="#2596be" w="100vw">
+          {/* MyEuribor ad section */}
           <Heading textAlign="center" mb={5} color="white">
             Problemas com Crédito Habitação? Download MyEuribor e começa já a controlar o teu futuro!
           </Heading>
@@ -297,26 +270,23 @@ const Home = () => {
           </Flex>
         </Box>
 
-        {/* mobwiser credits */}
-        <Box mt={5} p={5}>
+        <Box mt={5} p={5} w="100vw">
+          {/* mobwiser credits section */}
           <Center>
             <Flex direction="column" align="center">
-              <Image src="mobwiser_logo.jpg" alt="Logo voto consciente" h={'200px'} />
+              <Image src="mobwiser_logo.jpg" alt="mobiwser logo" h={'200px'} />
               <br></br>
               <Heading fontSize={{ base: 'md', lg: 'lg' }} color="primary" fontWeight={'bold'}>Desenvolvido @ Mobwiser</Heading>
             </Flex>
           </Center>
         </Box>
 
-
-        {/* footer improvisado */}
-        <Center bg="#F1A16E" color="white">
+        <Center bg="#F1A16E" color="white" w="100vw">
+          {/* Footer */}
           <Image src="logo.png" alt="Logo voto consciente" h={'100px'} />
         </Center>
-
       </main>
     </div>
-
   );
 };
 
