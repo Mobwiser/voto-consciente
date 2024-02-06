@@ -4,6 +4,12 @@ import {appFirebaseDb} from "../../firebase";
 
 const debatesCollectionName = 'debates';
 
+export interface Debate {
+    party1: string;
+    party2: string;
+    channel: string;
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     switch(req.method) {
         case 'GET':

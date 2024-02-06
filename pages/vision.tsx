@@ -1,7 +1,8 @@
+// Vision.tsx
 import Head from 'next/head';
-import {useAppContext} from '../context/AppContext';
-import {Radar} from 'react-chartjs-2';
-import {Party, SupportValues} from './api/parties';
+import { useAppContext } from '../context/AppContext';
+import { Radar } from 'react-chartjs-2';
+import { Party, SupportValues } from './api/parties';
 import {
   Button,
   Flex,
@@ -11,8 +12,11 @@ import {
   StatHelpText,
   StatLabel,
   StatNumber,
+  Text,
+  Box,
 } from '@chakra-ui/react';
-import React, {useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import Navbar from '../components/navbar/navbar';
 import { useRouter } from 'next/router';
 import {Idea} from "./api/ideas";
 
@@ -20,6 +24,7 @@ interface PartySupport {
   name: string;
   support: number;
 }
+
 export default function Vision() {
   const [appState] = useAppContext();
   const [parties, setParties] = useState<Party[]>();
@@ -28,22 +33,24 @@ export default function Vision() {
   const vision: Record<number, number> | undefined = appState.vision;
 
   useEffect(() => {
-    fetch('/api/parties').then((response) => response.json()).then((data) =>{
-      setParties(data);
-    });
+    fetch('/api/parties')
+      .then((response) => response.json())
+      .then((data) => {
+        setParties(data);
+      });
   }, []);
 
-  if(!parties?.length) {
-    return; // FIXME: Add loading
+  if (!parties?.length) {
+    return <div>Loading...</div>; // You might want to add a loading state
   }
 
   const partySupport: Record<string, PartySupport> = parties.reduce(
     (support: Record<string, PartySupport>, party: Party) => {
-      support[party.acronym] = {name: party.name, support: 0};
+      support[party.acronym] = { name: party.name, support: 0 };
       return support;
     },
     {},
-  )
+  );
 
   if(!vision) {
     router.push('/votation');
@@ -53,7 +60,7 @@ export default function Vision() {
     const idea: Idea = ideas[ideaId];
     const opinion = vision[ideaId];
     parties.forEach((party) => {
-      if(idea.owners.includes(party.acronym)) {
+      if (idea.owners.includes(party.acronym)) {
         switch (opinion) {
           case SupportValues.FAVOR:
             partySupport[party.acronym].support += 1;
@@ -65,24 +72,19 @@ export default function Vision() {
             partySupport[party.acronym].support -= 2;
             break;
           default:
-              partySupport[party.acronym].support += 0;
-              break;
+            partySupport[party.acronym].support += 0;
+            break;
         }
       }
-    })
+    });
   });
-
 
   const partySupportArray = Object.values(partySupport).sort(
     (a, b) => b.support - a.support,
   );
 
-  console.log('data', (Object.values(partySupport) || []).map(
-      (partySupport) => partySupport.support,
-  ));
-
   const data = {
-    labels: parties.map(party => party.acronym),
+    labels: parties.map((party) => party.acronym),
     datasets: [
       {
         label: 'Compatibilidade politica',
@@ -96,6 +98,16 @@ export default function Vision() {
     ],
   };
 
+  const getTopMatchingParties = (): PartySupport[] => {
+    if (partySupportArray.length > 0) {
+      const maxSupport = Math.max(...partySupportArray.map(partySupport => partySupport.support));
+      return partySupportArray.filter(partySupport => partySupport.support === maxSupport);
+    }
+    return [];
+  };
+
+  const topMatchingParties = getTopMatchingParties();
+
   return (
     <div>
       <Head>
@@ -108,6 +120,7 @@ export default function Vision() {
       </Head>
 
       <main>
+        <Navbar />
         <Flex
           flexDirection="column"
           justifyContent="space-around"
@@ -125,6 +138,35 @@ export default function Vision() {
           >
             Visão da sociedade
           </Heading>
+
+          {topMatchingParties.length > 0 && (
+            <Box
+              borderRadius="lg"
+              overflow="hidden"
+              p={{ base: 4, sm: 6 }}
+              bgColor="#f2f2f2"
+              maxW={{ base: 'full', sm: 'md', lg: 'lg' }}
+              width="90%"
+              margin="auto"
+              mt={5}
+            >
+
+              <Heading size="sm" textAlign="center">
+                O(s) partido(s) com que mais se identifica:
+              </Heading>
+              <Text fontSize="md" fontWeight="bold" color="gray.500" textAlign="center" mt={2}>
+                {topMatchingParties.map((partySupport, index) => (
+                  <span key={`top_party_${index}`}>
+                    {index > 0 && ', '}
+                    {partySupport.name}
+                  </span>
+                ))}
+              </Text>
+
+            </Box>
+          )}
+
+
           <Heading
             color="accent"
             as="h5"

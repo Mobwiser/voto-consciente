@@ -23,6 +23,8 @@ export interface Party {
   acronym: string;
   site: string;
   slogan: string;
+  logo: string;
+  president: string;
 }
 
 export enum SupportValues {

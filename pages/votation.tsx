@@ -8,7 +8,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import Head from 'next/head';
-import styles from '../styles/Home.module.css';
+import Navbar from '../components/navbar/navbar';
 import {FaQuestion, FaRegGrinAlt, FaRegAngry, FaRegFrown} from 'react-icons/fa';
 import React, {useState} from 'react';
 import {Subjects, SupportValues} from './api/parties';
@@ -71,7 +71,7 @@ export default function Votation() {
   }
 
   return (
-    <div className={styles.container}>
+    <div>
       <Head>
         <title>Voto consciente</title>
         <meta
@@ -81,7 +81,8 @@ export default function Votation() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={styles.main}>
+      <main>
+      <Navbar />
         <Flex
           flexDirection="column"
           justifyContent="space-around"
@@ -109,10 +110,9 @@ export default function Votation() {
 
             {!showVotationForm && <Heading
                 size="md"
-                color="white"
+                color="primary"
                 p={2}
                 marginTop={10}
-                marginBottom={10}
                 w={'100vw'}
             >
               Escolhe os temas que queres ver cobertos no questionário?
