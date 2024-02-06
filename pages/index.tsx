@@ -10,7 +10,7 @@ const Home = () => {
   const [feedData, setFeedData] = useState(null);
   const [debates, setDebates] = useState([]);
   const [parties, setParties] = useState([]);
-  const [partiesMap, setPartiesMap] = useState({});
+  const [partiesMap, setPartiesMap] = useState();
   const [displayedNewsItems, setDisplayedNewsItems] = useState(5);
   const [displayedDebateItems, setDisplayedDebateItems] = useState(3);
 
@@ -56,7 +56,7 @@ const Home = () => {
     setDisplayedDebateItems(prev => prev + 3);
   };
 
-  if(!partiesMap || !parties || !debates) {
+  if(!partiesMap || !parties.length || !debates.length) {
     return;
   }
 
