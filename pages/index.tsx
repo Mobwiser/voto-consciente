@@ -3,8 +3,8 @@ import Head from 'next/head';
 import Navbar from '../components/navbar/navbar';
 import Banner from '../components/banner';
 import React, { useEffect, useState } from 'react';
-import {Party} from "./api/parties";
-import {Debate} from "./api/debates";
+import { Party } from "./api/parties";
+import { Debate } from "./api/debates";
 
 const Home = () => {
   const [feedData, setFeedData] = useState(null);
@@ -35,14 +35,14 @@ const Home = () => {
         });
 
       fetch('/api/parties')
-          .then((partiesResponse) => partiesResponse.json())
-          .then((partiesData) => {
-            setParties(partiesData);
-            setPartiesMap(partiesData.reduce((partiesLogoMap: Record<string,Party>, party: Party) => ({...partiesLogoMap, [party.acronym]: party}), {}));
-          })
-          .catch((error) => {
-            console.error('Error fetching debates data:', error);
-          });
+        .then((partiesResponse) => partiesResponse.json())
+        .then((partiesData) => {
+          setParties(partiesData);
+          setPartiesMap(partiesData.reduce((partiesLogoMap: Record<string, Party>, party: Party) => ({ ...partiesLogoMap, [party.acronym]: party }), {}));
+        })
+        .catch((error) => {
+          console.error('Error fetching debates data:', error);
+        });
     };
 
     fetchData();
@@ -56,9 +56,15 @@ const Home = () => {
     setDisplayedDebateItems(prev => prev + 3);
   };
 
-  if(!partiesMap || !parties.length || !debates.length) {
+  if (!partiesMap || !parties.length || !debates.length) {
     return;
   }
+
+  const isDebateDateTimePassed = (datetime) => {
+    const debateDateTime = new Date(datetime.seconds * 1000);
+    const currentDate = new Date();
+    return debateDateTime < currentDate;
+  };
 
   const NewsCard = ({ item }) => (
     <Box
@@ -92,55 +98,65 @@ const Home = () => {
     </Box>
   );
 
-  const DebateCard = ({ debate, party1, party2, isFirst }) => (
-    <Box
-      borderRadius="lg"
-      overflow="hidden"
-      p={{ base: 4, sm: 6 }}
-      bgColor={isFirst ? "#fab182" : "#f2f2f2"}
-      maxW={{ base: 'full', sm: 'md', lg: 'lg' }}
-      width="90%"
-      margin="auto"
-      mt={5}
-    >
-      {isFirst && (
-        <Heading fontSize="x-large" color={'black'} fontWeight={'bold'} mb={4} textAlign={'center'}>
-          Próximo Debate:
-        </Heading>
-      )}
-      <Flex alignItems="center" mb={4}>
-        <Image src={`parties/${party1.logo}`} alt={`${party1.name} Logo`} boxSize="4rem" mr={2} />
-        <Center>
-          <Stack>
-            <Heading size="sm" textAlign="center">
-              {party1.president} ({party1.acronym}) X {party2.president} ({party2.acronym})
-            </Heading>
-            <Text fontSize="md" fontWeight="bold" color="gray.500" textAlign="center" mt={2} borderRadius={4} >
-              Canal: {debate.channel}<br />
-              {new Date(debate.datetime.seconds * 1000).toLocaleTimeString('pt-BR', { timeStyle: 'short' })}<br />
-              {new Date(debate.datetime.seconds * 1000).toLocaleDateString('pt-BR', { dateStyle: 'short' })}
-            </Text>
-            <Center mt={2}>
-              {debate.url ? (
-                <Link href={debate.url} isExternal>
-                  <Button
-                    bg="#5966B3"
-                    color={'white'}
-                    size="md"
-                    borderRadius="full"
-                    _hover={{ bg: '#5966C6' }}
-                  >
-                    Assistir Debate
-                  </Button>
-                </Link>
-              ) : null}
-            </Center>
-          </Stack>
-        </Center>
-        <Image src={`parties/${party2.logo}`} alt={`${party2.name} Logo`} boxSize="4rem" ml={2} borderRadius={4} />
-      </Flex>
-    </Box>
-  );
+  const DebateCard = ({ debate, party1, party2, isFirst, isDateTimePassed }) => {
+    const getBgColor = () => {
+      if (isDateTimePassed) {
+        return "#cccccc";
+      } else {
+        return isFirst ? "#fab182" : "#f2f2f2";
+      }
+    };
+
+    return (
+      <Box
+        borderRadius="lg"
+        overflow="hidden"
+        p={{ base: 4, sm: 6 }}
+        bgColor={getBgColor()}
+        maxW={{ base: 'full', sm: 'md', lg: 'lg' }}
+        width="90%"
+        margin="auto"
+        mt={5}
+      >
+        {isFirst && (
+          <Heading fontSize="x-large" color={'black'} fontWeight={'bold'} mb={4} textAlign={'center'}>
+            Próximo Debate:
+          </Heading>
+        )}
+        <Flex alignItems="center" mb={4}>
+          <Image src={`parties/${party1.logo}`} alt={`${party1.name} Logo`} boxSize="4rem" mr={2} />
+          <Center>
+            <Stack>
+              <Heading size="sm" textAlign="center">
+                {party1.president} ({party1.acronym}) X {party2.president} ({party2.acronym})
+              </Heading>
+              <Text fontSize="md" fontWeight="bold" color="gray.500" textAlign="center" mt={2} borderRadius={4} >
+                Canal: {debate.channel}<br />
+                {new Date(debate.datetime.seconds * 1000).toLocaleTimeString('pt-BR', { timeStyle: 'short' })}<br />
+                {new Date(debate.datetime.seconds * 1000).toLocaleDateString('pt-BR', { dateStyle: 'short' })}
+              </Text>
+              <Center mt={2}>
+                {debate.url ? (
+                  <Link href={debate.url} isExternal>
+                    <Button
+                      bg="#5966B3"
+                      color={'white'}
+                      size="md"
+                      borderRadius="full"
+                      _hover={{ bg: '#5966C6' }}
+                    >
+                      Assistir Debate
+                    </Button>
+                  </Link>
+                ) : null}
+              </Center>
+            </Stack>
+          </Center>
+          <Image src={`parties/${party2.logo}`} alt={`${party2.name} Logo`} boxSize="4rem" ml={2} borderRadius={4} />
+        </Flex>
+      </Box>
+    );
+  };
 
   return (
     <div>
@@ -175,13 +191,18 @@ const Home = () => {
               </Heading>
               <br />
 
-              {/* Implementar lógica de ir atualizando as informações dos debates para não mostrar aqueles que já passsaram */}
+              {/* Sorting Debates */}
               {debates
-                .slice(0, displayedDebateItems)
                 .sort((a, b) => {
                   const dateA = new Date(a.datetime.seconds * 1000);
                   const dateB = new Date(b.datetime.seconds * 1000);
-                  return dateA.getTime() - dateB.getTime(); // confirmar se o sort está correto
+                  if (isDebateDateTimePassed(a.datetime) && !isDebateDateTimePassed(b.datetime)) {
+                    return 1; 
+                  } else if (!isDebateDateTimePassed(a.datetime) && isDebateDateTimePassed(b.datetime)) {
+                    return -1; 
+                  } else {
+                    return dateA.getTime() - dateB.getTime(); 
+                  }
                 })
                 .map((debate: Debate, index) => (
                   <Center key={index}>
@@ -189,7 +210,8 @@ const Home = () => {
                       debate={debate}
                       party1={partiesMap[debate.party1]}
                       party2={partiesMap[debate.party2]}
-                      isFirst={index === 0} // identifição do primeiro card
+                      isFirst={index === 0} // identification of the first card
+                      isDateTimePassed={isDebateDateTimePassed(debate.datetime)}
                     />
                   </Center>
                 ))}
