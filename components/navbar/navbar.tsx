@@ -1,18 +1,21 @@
 import {
     Box,
+    Button,
     Flex,
     HStack,
     IconButton,
-    useDisclosure,
+    Image,
+    Stack,
     useColorModeValue,
-    Stack, Button,
+    useDisclosure
 } from '@chakra-ui/react'
-  import { useRouter } from 'next/router';
-  import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons'
-  import Link from 'next/link';
-  import { ReactNode } from 'react';
-  
-  interface Props {
+import { CloseIcon, HamburgerIcon } from '@chakra-ui/icons'
+
+import Link from 'next/link';
+import { ReactNode } from 'react';
+import { useRouter } from 'next/router';
+
+interface Props {
     children: React.ReactNode
   }
   
@@ -64,7 +67,7 @@ import {
               onClick={isOpen ? onClose : onOpen}
             />
             <HStack spacing={8} alignItems={'center'}>
-              <img src="/logo.png" alt="Logo" style={{ width: '80px', height: '80px'}} />
+              <Image src="/logo.png" alt="Logo" style={{ width: '80px', height: '80px'}} />
               <HStack as={'nav'} spacing={4} display={{ base: 'none', md: 'flex' }}>
                 {Links.map(({name, path}) => (
                   <NavLink key={path} path={path}>

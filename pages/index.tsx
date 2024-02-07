@@ -1,10 +1,11 @@
-import { Button, Center, Flex, Heading, Link, Text, Image, Box, Stack } from '@chakra-ui/react';
+import { Box, Button, Center, Flex, Heading, Image, Link, Stack, Text } from '@chakra-ui/react';
+import React, { useEffect, useState } from 'react';
+
+import Banner from '../components/banner';
+import { Debate } from "./api/debates";
 import Head from 'next/head';
 import Navbar from '../components/navbar/navbar';
-import Banner from '../components/banner';
-import React, { useEffect, useState } from 'react';
 import { Party } from "./api/parties";
-import { Debate } from "./api/debates";
 
 const Home = () => {
   const [feedData, setFeedData] = useState(null);
