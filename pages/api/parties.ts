@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import {collection, query, getDocs} from 'firebase/firestore';
+import {collection, getDocs, query} from 'firebase/firestore';
+
 import { appFirebaseDb } from "../../firebase";
 
 export const partiesCollectionName = 'parties';
@@ -25,6 +26,8 @@ export interface Party {
   slogan: string;
   logo: string;
   president: string;
+  program: string;
+  image: string;
 }
 
 export enum SupportValues {
