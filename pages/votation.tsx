@@ -1,36 +1,41 @@
 import {
+  Box,
   Button,
   Flex,
   Heading,
   Icon,
-  Progress, Tag,
+  Progress, Switch, Tag,
   Text,
 } from '@chakra-ui/react';
 import Head from 'next/head';
 import Navbar from '../components/navbar/navbar';
-import styles from '../styles/Home.module.css';
 import {FaQuestion, FaRegGrinAlt, FaRegAngry, FaRegFrown} from 'react-icons/fa';
-import React, {useEffect, useState} from 'react';
-import {Idea, SupportValues} from './api/parties';
+import React, {useState} from 'react';
+import {Subjects, SupportValues} from './api/parties';
 import {useRouter} from 'next/router';
 import {useAppContext} from '../context/AppContext';
+import {getVotation, Idea} from "./api/ideas";
 
 export default function Votation() {
   const [ideaIndex, setIdeaIndex] = useState(0);
-  const [isOpen, setIsOpen] = useState<boolean>(false);
   const [ideas, setIdeas] = useState<Idea[]>([]);
-  useEffect(() => {
-    fetch('/api/ideas').then((response) => response.json()).then((data) => {
-      setIdeas(data);
-      setAppState((prevState) => ({
-        ...prevState,
-        ideas: data.reduce((ideasMap: Record<string, Idea>, idea: Idea) => ({...ideasMap, [idea.id.toString()]: idea}), {} ),
-      }));
-    })
-  }, []);
+  const [subjects, setSubjects] = useState<string[]>(Object.keys(Subjects));
+  const [showVotationForm, setShowVotationForm] = useState(false);
+
   const router = useRouter();
 
   const [_appState, setAppState] = useAppContext();
+
+  const isSubjectChecked = (subject: string) => subjects.indexOf(subject) > -1;
+
+  const onToggleSubject = (subject: string) => {
+    const index = subjects.indexOf(subject);
+    if(index === -1) {
+      setSubjects([...subjects, subject]);
+    }else {
+      setSubjects(subjects.filter(s => s !== subject));
+    }
+  }
 
   const handleVote = (vote: SupportValues, idea: Idea) => {
     handleVoteValue(idea, vote);
@@ -54,8 +59,19 @@ export default function Votation() {
 
   const currentIdea: () => Idea = () => ideas[ideaIndex];
 
+  const startQuiz = () => {
+    getVotation(subjects).then((data) => {
+      setIdeas(data);
+      setShowVotationForm(true);
+      setAppState((prevState) => ({
+        ...prevState,
+        ideas: data.reduce((ideasMap: Record<string, Idea>, idea: Idea) => ({...ideasMap, [idea.id.toString()]: idea}), {} ),
+      }));
+    })
+  }
+
   return (
-    <div className={styles.container}>
+    <div>
       <Head>
         <title>Voto consciente</title>
         <meta
@@ -65,7 +81,7 @@ export default function Votation() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={styles.main}>
+      <main>
       <Navbar />
         <Flex
           flexDirection="column"
@@ -91,17 +107,62 @@ export default function Votation() {
             >
               Voto consciente
             </Heading>
-            <Progress
+
+            {!showVotationForm && <Heading
+                size="md"
+                color="primary"
+                p={2}
+                marginTop={10}
+                w={'100vw'}
+            >
+              Escolhe os temas que queres ver cobertos no questionário?
+            </Heading>}
+
+            {!showVotationForm && <Box>
+              {Object.keys(Subjects).map((subject) => (
+                  <Flex key={subject}
+                        flexDirection={'row'}
+                        alignItems={'flex-end'}
+                        justifyContent={'flex-end'}
+                        gap={5}
+                        marginBottom={5}
+                        w={'90vw'}>
+                    <Text>{Subjects[subject]}</Text>
+                    <Switch
+                        size={'lg'}
+                        colorScheme='teal'
+                        isChecked={isSubjectChecked(subject)}
+                        onChange={() => onToggleSubject(subject)}
+                    >
+                    </Switch>
+                  </Flex>
+              ))}
+            </Box>}
+
+
+
+            {!ideas.length && <Button
+                size='md'
+                height='48px'
+                width='90vw'
+                border='2px'
+                borderColor='green.500'
+                onClick={startQuiz}
+            >
+              Começar
+            </Button>}
+
+            {!!ideas.length && <Progress
               colorScheme="green"
               height="32px"
               w="90vw"
               marginTop={"1rem"}
               marginBottom={"1rem"}
               value={(ideaIndex / ideas.length) * 100}
-            />
+            /> }
           </Flex>
 
-          <Flex
+          {!!ideas.length && <Flex
             flexDirection="column"
             justifyContent="center"
             alignItems="center"
@@ -207,6 +268,7 @@ export default function Votation() {
               </Flex>
             </Flex>
           </Flex>
+          }
         </Flex>
       </main>
     </div>

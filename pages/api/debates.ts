@@ -1,8 +1,16 @@
 import {NextApiRequest, NextApiResponse} from "next";
 import {collection, getDocs, query} from "firebase/firestore";
+
 import {appFirebaseDb} from "../../firebase";
 
 const debatesCollectionName = 'debates';
+
+export interface Debate {
+    party1: string;
+    party2: string;
+    channel: string;
+    datetime: Date;
+}
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     switch(req.method) {

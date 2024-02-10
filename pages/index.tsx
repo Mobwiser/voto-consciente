@@ -2,12 +2,17 @@ import { Button, Center, Flex, Heading, Link, Text, Image, Box, Stack } from '@c
 import Head from 'next/head';
 import Navbar from '../components/navbar/navbar';
 import Banner from '../components/banner';
-import styles from '../styles/Home.module.css';
 import React, { useEffect, useState } from 'react';
+import { Party } from "./api/parties";
+import { Debate } from "./api/debates";
+import MyEuriborAd from "../components/myeuribor-ad";
+import MobwiserBanner from "../components/mobwiser-banner";
 
 const Home = () => {
   const [feedData, setFeedData] = useState(null);
   const [debates, setDebates] = useState([]);
+  const [parties, setParties] = useState([]);
+  const [partiesMap, setPartiesMap] = useState();
   const [displayedNewsItems, setDisplayedNewsItems] = useState(5);
   const [displayedDebateItems, setDisplayedDebateItems] = useState(3);
 
@@ -30,6 +35,16 @@ const Home = () => {
         .catch((error) => {
           console.error('Error fetching debates data:', error);
         });
+
+      fetch('/api/parties')
+        .then((partiesResponse) => partiesResponse.json())
+        .then((partiesData) => {
+          setParties(partiesData);
+          setPartiesMap(partiesData.reduce((partiesLogoMap: Record<string, Party>, party: Party) => ({ ...partiesLogoMap, [party.acronym]: party }), {}));
+        })
+        .catch((error) => {
+          console.error('Error fetching debates data:', error);
+        });
     };
 
     fetchData();
@@ -43,7 +58,17 @@ const Home = () => {
     setDisplayedDebateItems(prev => prev + 3);
   };
 
-  const NewsCard = ({ item, onClick }) => (
+  if (!partiesMap || !parties.length || !debates.length) {
+    return;
+  }
+
+  const isDebateDateTimePassed = (datetime) => {
+    const debateDateTime = new Date(datetime.seconds * 1000);
+    const currentDate = new Date();
+    return debateDateTime < currentDate;
+  };
+
+  const NewsCard = ({ item }) => (
     <Box
       borderRadius="lg"
       overflow="hidden"
@@ -75,65 +100,75 @@ const Home = () => {
     </Box>
   );
 
-  const DebateCard = ({ debate, party1Logo, party2Logo, isFirst }) => (
-    <Box
-      borderRadius="lg"
-      overflow="hidden"
-      p={{ base: 4, sm: 6 }}
-      bgColor={isFirst ? "#fab182" : "#f2f2f2"}
-      maxW={{ base: 'full', sm: 'md', lg: 'lg' }}
-      width="90%"
-      margin="auto"
-      mt={5}
-    >
-      {isFirst && (
-        <Heading fontSize="x-large" color={'black'} fontWeight={'bold'} mb={4} textAlign={'center'}>
-          Próximo Debate:
-        </Heading>
-      )}
-      <Flex alignItems="center" mb={4}>
-        <Image src={party1Logo} alt="Party 1 Logo" boxSize="80px" mr={2} />
-        <Center>
-          <Stack>
-            <Heading size="sm" textAlign="center">
-              {debate.title}
-            </Heading>
-            <Text fontSize="md" fontWeight="bold" color="gray.500" textAlign="center" mt={2}>
-              Canal: {debate.channel}<br />
-              {new Date(debate.datetime.seconds * 1000).toLocaleTimeString('pt-BR', { timeStyle: 'short' })}<br />
-              {new Date(debate.datetime.seconds * 1000).toLocaleDateString('pt-BR', { dateStyle: 'short' })}
-            </Text>
-            <Center mt={2}>
-              {debate.url ? (
-                <Link href={debate.url} isExternal>
-                  <Button
-                    bg="#5966B3"
-                    color={'white'}
-                    size="md"
-                    borderRadius="full"
-                    _hover={{ bg: '#5966C6' }}
-                  >
-                    Assistir Debate
-                  </Button>
-                </Link>
-              ) : null}
-            </Center>
-          </Stack>
-        </Center>
-        <Image src={party2Logo} alt="Party 2 Logo" boxSize="80px" ml={2} />
-      </Flex>
-    </Box>
-  );
+  const DebateCard = ({ debate, party1, party2, isFirst, isDateTimePassed }) => {
+    const getBgColor = () => {
+      if (isDateTimePassed) {
+        return "#cccccc";
+      } else {
+        return isFirst ? "#fab182" : "#f2f2f2";
+      }
+    };
+
+    return (
+      <Box
+        borderRadius="lg"
+        overflow="hidden"
+        p={{ base: 4, sm: 6 }}
+        bgColor={getBgColor()}
+        maxW={{ base: 'full', sm: 'md', lg: 'lg' }}
+        width="90%"
+        margin="auto"
+        mt={5}
+      >
+        {isFirst && (
+          <Heading fontSize="x-large" color={'black'} fontWeight={'bold'} mb={4} textAlign={'center'}>
+            Próximo Debate:
+          </Heading>
+        )}
+        <Flex alignItems="center" mb={4}>
+          <Image src={`parties/${party1.logo}`} alt={`${party1.name} Logo`} boxSize="4rem" mr={2} />
+          <Center>
+            <Stack>
+              <Heading size="sm" textAlign="center">
+                {party1.president} ({party1.acronym}) X {party2.president} ({party2.acronym})
+              </Heading>
+              <Text fontSize="md" fontWeight="bold" color="gray.500" textAlign="center" mt={2} borderRadius={4} >
+                Canal: {debate.channel}<br />
+                {new Date(debate.datetime.seconds * 1000).toLocaleTimeString('pt-BR', { timeStyle: 'short' })}<br />
+                {new Date(debate.datetime.seconds * 1000).toLocaleDateString('pt-BR', { dateStyle: 'short' })}
+              </Text>
+              <Center mt={2}>
+                {debate.url ? (
+                  <Link href={debate.url} isExternal>
+                    <Button
+                      bg="#5966B3"
+                      color={'white'}
+                      size="md"
+                      borderRadius="full"
+                      _hover={{ bg: '#5966C6' }}
+                    >
+                      Assistir Debate
+                    </Button>
+                  </Link>
+                ) : null}
+              </Center>
+            </Stack>
+          </Center>
+          <Image src={`parties/${party2.logo}`} alt={`${party2.name} Logo`} boxSize="4rem" ml={2} borderRadius={4} />
+        </Flex>
+      </Box>
+    );
+  };
 
   return (
-    <div className={styles.container}>
+    <div>
       <Head>
         <title>Voto consciente</title>
         <meta name="description" content="Verifica a tua identidade politica de acordo com a tua visão da sociedade" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={styles.main}>
+      <main >
         <Navbar />
 
         <Flex align="center" justify="center" w="100vw">
@@ -158,21 +193,28 @@ const Home = () => {
               </Heading>
               <br />
 
-              {/* Implementar lógica de ir atualizando as informações dos debates para não mostrar aqueles que já passsaram */}
+              {/* Sorting Debates */}
               {debates
-                .slice(0, displayedDebateItems)
                 .sort((a, b) => {
                   const dateA = new Date(a.datetime.seconds * 1000);
                   const dateB = new Date(b.datetime.seconds * 1000);
-                  return dateA.getTime() - dateB.getTime(); // confirmar se o sort está correto
+                  if (isDebateDateTimePassed(a.datetime) && !isDebateDateTimePassed(b.datetime)) {
+                    return 1; 
+                  } else if (!isDebateDateTimePassed(a.datetime) && isDebateDateTimePassed(b.datetime)) {
+                    return -1; 
+                  } else {
+                    return dateA.getTime() - dateB.getTime(); 
+                  }
                 })
-                .map((debate, index) => (
+                .slice(0, displayedDebateItems)
+                .map((debate: Debate, index) => (
                   <Center key={index}>
                     <DebateCard
                       debate={debate}
-                      party1Logo="logo.png"
-                      party2Logo="logo.png"
-                      isFirst={index === 0} // identifição do primeiro card
+                      party1={partiesMap[debate.party1]}
+                      party2={partiesMap[debate.party2]}
+                      isFirst={index === 0} // identification of the first card
+                      isDateTimePassed={isDebateDateTimePassed(debate.datetime)}
                     />
                   </Center>
                 ))}
@@ -203,7 +245,7 @@ const Home = () => {
                     return dateB.getTime() - dateA.getTime(); // Sort by publication date (most recent first)
                   })
                   .map((item, index) => (
-                    <NewsCard key={index} item={item} onClick={() => (window.location.href = item.link)} />
+                    <NewsCard key={index} item={item} />
                   ))}
 
               </Stack>
@@ -237,49 +279,9 @@ const Home = () => {
           </Flex>
         </Box>
 
-        <Box mt={5} p={5} bgColor="#2596be" w="100vw">
-          {/* MyEuribor ad section */}
-          <Heading textAlign="center" mb={5} color="white">
-            Problemas com Crédito Habitação? Download MyEuribor e começa já a controlar o teu futuro!
-          </Heading>
-          <Flex justifyContent="center">
-            <Box className="image-block-10" textAlign="center" mr={5}>
-              <Link href="https://apps.apple.com/us/app/my-euribor/id6444867657" target="_self">
-                <Image
-                  src="https://bucket.mlcdn.com/a/1663/1663214/images/a5554db599f3e15d98a05b91e782ea5305ae445f.png"
-                  alt=""
-                  maxW="178px"
-                  maxH="178px"
-                  objectFit="cover"
-                  borderRadius="md"
-                />
-              </Link>
-            </Box>
-            <Box className="image-block-15" textAlign="center">
-              <Link href="https://play.google.com/store/apps/details?id=pt.mobwiser.my_euribor" target="_self">
-                <Image
-                  src="https://bucket.mlcdn.com/a/1663/1663214/images/111b33d7a34a467e989ce23e27d6f2b2db41e07d.jpeg"
-                  alt=""
-                  maxW="169px"
-                  maxH="169px"
-                  objectFit="cover"
-                  borderRadius="md"
-                />
-              </Link>
-            </Box>
-          </Flex>
-        </Box>
+        <MyEuriborAd />
 
-        <Box mt={5} p={5} w="100vw">
-          {/* mobwiser credits section */}
-          <Center>
-            <Flex direction="column" align="center">
-              <Image src="mobwiser_logo.jpg" alt="mobiwser logo" h={'200px'} />
-              <br></br>
-              <Heading fontSize={{ base: 'md', lg: 'lg' }} color="primary" fontWeight={'bold'}>Desenvolvido @ Mobwiser</Heading>
-            </Flex>
-          </Center>
-        </Box>
+        <MobwiserBanner />
 
         <Center bg="#F1A16E" color="white" w="100vw">
           {/* Footer */}
