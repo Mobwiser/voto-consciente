@@ -102,10 +102,12 @@ const Home = () => {
 
   const DebateCard = ({ debate, party1, party2, isFirst, isDateTimePassed }) => {
     const getBgColor = () => {
-      if (isDateTimePassed) {
-        return "#cccccc";
+      if (isDateTimePassed && isFirst) {
+        return "cccccc";  
+      } else if (isDateTimePassed) {
+        return "#cccccc"; 
       } else {
-        return isFirst ? "#fab182" : "#f2f2f2";
+        return isFirst ? "#fab182" : "#f2f2f2"; 
       }
     };
 
