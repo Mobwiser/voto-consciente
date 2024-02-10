@@ -15,10 +15,11 @@ import {
   Text,
   Box,
 } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Navbar from '../components/navbar/navbar';
-import { useRouter } from 'next/router';
 import {Idea} from "./api/ideas";
+import MyEuriborAd from "../components/myeuribor-ad";
+import MobwiserBanner from "../components/mobwiser-banner";
 
 interface PartySupport {
   name: string;
@@ -29,7 +30,6 @@ export default function Vision() {
   const [appState] = useAppContext();
   const [parties, setParties] = useState<Party[]>();
   const [ideas] = useState(appState.ideas);
-  const router = useRouter();
   const vision: Record<number, number> | undefined = appState.vision;
 
   useEffect(() => {
@@ -52,11 +52,7 @@ export default function Vision() {
     {},
   );
 
-  if(!vision) {
-    router.push('/votation');
-  }
-
-  Object.keys(vision).forEach((ideaId: string) => {
+  Object.keys(vision || []).forEach((ideaId: string) => {
     const idea: Idea = ideas[ideaId];
     const opinion = vision[ideaId];
     parties.forEach((party) => {
@@ -199,11 +195,15 @@ export default function Vision() {
             Radar de compatibilidade
           </Heading>
           <Radar data={data} />
-          <Link href="/votation">
+          <Link href="/votation" marginTop={5}>
             <Button colorScheme="teal" variant="outline">
               Recomeçar
             </Button>
           </Link>
+          <Box marginTop={10}>
+            <MyEuriborAd />
+            <MobwiserBanner />
+          </Box>
         </Flex>
       </main>
     </div>
