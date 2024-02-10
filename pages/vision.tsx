@@ -122,7 +122,6 @@ export default function Vision() {
           justifyContent="space-around"
           alignItems="center"
           w="100vw"
-          mt="15px"
         >
           <Heading
             size="lg"
@@ -169,6 +168,7 @@ export default function Vision() {
             size="sm"
             marginTop={15}
             marginBottom={15}
+            textAlign="center"
           >
             Compatibilidade com os diferentes partidos
           </Heading>
