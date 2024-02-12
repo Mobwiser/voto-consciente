@@ -60,12 +60,12 @@ export default function Votation() {
   const currentIdea: () => Idea = () => ideas[ideaIndex];
 
   const startQuiz = () => {
-  // Checking if at least one subject is selected
-  if (subjects.length === 0) {
-    // prompt mensagem pop up 
-    alert('Escolha pelo menos um tema para iniciar o quiz.');
-    return;
-  }
+    // Checking if at least one subject is selected
+    if (subjects.length === 0) {
+      // prompt mensagem pop up
+      alert('Escolha pelo menos um tema para iniciar o quiz.');
+      return;
+    }
 
     getVotation(subjects).then((data) => {
       setIdeas(data);
@@ -118,7 +118,7 @@ export default function Votation() {
                 size="md"
                 color="primary"
                 p={2}
-                marginTop={5}
+                marginTop={10}
                 w={'100vw'}
             >
               Escolhe os temas que queres ver cobertos no questionário?

@@ -103,11 +103,11 @@ const Home = () => {
   const DebateCard = ({ debate, party1, party2, isFirst, isDateTimePassed }) => {
     const getBgColor = () => {
       if (isDateTimePassed && isFirst) {
-        return "cccccc";  
+        return "cccccc";
       } else if (isDateTimePassed) {
-        return "#cccccc"; 
+        return "#cccccc";
       } else {
-        return isFirst ? "#fab182" : "#f2f2f2"; 
+        return isFirst ? "#fab182" : "#f2f2f2";
       }
     };
 
@@ -201,11 +201,11 @@ const Home = () => {
                   const dateA = new Date(a.datetime.seconds * 1000);
                   const dateB = new Date(b.datetime.seconds * 1000);
                   if (isDebateDateTimePassed(a.datetime) && !isDebateDateTimePassed(b.datetime)) {
-                    return 1; 
+                    return 1;
                   } else if (!isDebateDateTimePassed(a.datetime) && isDebateDateTimePassed(b.datetime)) {
-                    return -1; 
+                    return -1;
                   } else {
-                    return dateA.getTime() - dateB.getTime(); 
+                    return dateA.getTime() - dateB.getTime();
                   }
                 })
                 .slice(0, displayedDebateItems)
