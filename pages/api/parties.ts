@@ -12,6 +12,7 @@ export enum Subjects {
   ENVIRONMENT = 'Ambiente',
   CULTURE = 'Cultura',
   SECURITY = 'Segurança',
+  FOREIGN_AFFAIRS = 'Politica externa',
   INTERNAL_ADMINISTRATION = 'Administração interna',
   HUMAN_RIGHTS = 'Direitos humanos',
   MOBILITY = 'Mobilidade',

@@ -1,7 +1,6 @@
 import {
   Button,
   Card,
-  CardBody,
   Flex,
   Heading,
   Image,
@@ -46,9 +45,8 @@ export default function Parties() {
           justifyContent="space-around"
           alignItems="center"
           w="100vw"
-          mt="15px"
         >
-          <Heading size="lg" color="white" bgColor="primary" p={2} w={'100vw'} textAlign="center">
+          <Heading size="lg" color="white" bgColor="accent" p={2} w={'100vw'} textAlign="center">
             Partidos Políticos
           </Heading>
           <Stack spacing={8} mt={8} maxWidth={"90%"}>

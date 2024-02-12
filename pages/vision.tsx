@@ -13,13 +13,14 @@ import {
   StatLabel,
   StatNumber,
   Text,
-  Box,
+  Box, Spinner,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import Navbar from '../components/navbar/navbar';
 import {Idea} from "./api/ideas";
 import MyEuriborAd from "../components/myeuribor-ad";
 import MobwiserBanner from "../components/mobwiser-banner";
+import {writeEvent} from "./api/analytics";
 
 interface PartySupport {
   name: string;
@@ -38,10 +39,16 @@ export default function Vision() {
       .then((data) => {
         setParties(data);
       });
+
+    if(vision && Object.keys(ideas|| {}).length) {
+      writeEvent('end-quiz', appState);
+    }
   }, []);
 
   if (!parties?.length) {
-    return <div>Loading...</div>; // You might want to add a loading state
+    return <Flex width={'100vw'} height={'100vh'} alignItems={'center'} justifyContent={'center'}>
+      <Spinner size={'xl'} color='primary' />
+    </Flex>; // You might want to add a loading state
   }
 
   const partySupport: Record<string, PartySupport> = parties.reduce(
@@ -56,6 +63,9 @@ export default function Vision() {
     const idea: Idea = ideas[ideaId];
     const opinion = vision[ideaId];
     parties.forEach((party) => {
+      if(!idea?.owners) {
+        return;
+      }
       if (idea.owners.includes(party.acronym)) {
         switch (opinion) {
           case SupportValues.FAVOR:
@@ -147,7 +157,7 @@ export default function Vision() {
             >
 
               <Heading size="sm" textAlign="center">
-                O(s) partido(s) com que mais se identifica:
+                Com base nos temas que escolheste e as tuas respostas, o(s) partido(s) com que mais se identifica:
               </Heading>
               <Text fontSize="md" fontWeight="bold" color="gray.500" textAlign="center" mt={2}>
                 {topMatchingParties.map((partySupport, index) => (

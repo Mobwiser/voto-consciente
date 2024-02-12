@@ -10,21 +10,31 @@ import {
 import Head from 'next/head';
 import Navbar from '../components/navbar/navbar';
 import {FaQuestion, FaRegGrinAlt, FaRegAngry, FaRegFrown} from 'react-icons/fa';
-import React, {useState} from 'react';
-import {Subjects, SupportValues} from './api/parties';
+import React, {useEffect, useState} from 'react';
+import {Party, Subjects, SupportValues} from './api/parties';
 import {useRouter} from 'next/router';
 import {useAppContext} from '../context/AppContext';
 import {getVotation, Idea} from "./api/ideas";
+import {writeEvent} from "./api/analytics";
 
 export default function Votation() {
   const [ideaIndex, setIdeaIndex] = useState(0);
   const [ideas, setIdeas] = useState<Idea[]>([]);
-  const [subjects, setSubjects] = useState<string[]>(Object.keys(Subjects));
+  const [subjects, setSubjects] = useState<string[]>([]);
   const [showVotationForm, setShowVotationForm] = useState(false);
+  const [parties, setParties] = useState<Party[]>([]);
 
   const router = useRouter();
 
   const [_appState, setAppState] = useAppContext();
+
+  useEffect(() => {
+    fetch('/api/parties')
+        .then((response) => response.json())
+        .then((data) => {
+          setParties(data);
+        });
+  }, []);
 
   const isSubjectChecked = (subject: string) => subjects.indexOf(subject) > -1;
 
@@ -74,6 +84,11 @@ export default function Votation() {
         ...prevState,
         ideas: data.reduce((ideasMap: Record<string, Idea>, idea: Idea) => ({...ideasMap, [idea.id.toString()]: idea}), {} ),
       }));
+
+      writeEvent('start-quiz', {
+        subjects,
+        ideas: data,
+      })
     })
   }
 
@@ -107,7 +122,7 @@ export default function Votation() {
             <Heading
               size="lg"
               color="white"
-              bgColor="primary"
+              bgColor="accent"
               p={2}
               w={'100vw'}
             >
@@ -118,10 +133,19 @@ export default function Votation() {
                 size="md"
                 color="primary"
                 p={2}
-                marginTop={10}
+                marginTop={5}
                 w={'100vw'}
             >
               Escolhe os temas que queres ver cobertos no questionário?
+            </Heading>}
+
+            {!showVotationForm && <Heading
+                size="sm"
+                color="secondary"
+                p={2}
+                w={'100vw'}
+            >
+              Para cada tema que escolheres, iremos apresentar uma proposta de cada partido.
             </Heading>}
 
             {!showVotationForm && <Box>
@@ -146,7 +170,9 @@ export default function Votation() {
             </Box>}
 
 
-
+            {!ideas.length && <Heading size={'sm'} textAlign={'right'} width='90vw' color={'accent'} marginBottom={5}>
+              Estimativa de ideas: {subjects.length * parties.length}
+            </Heading>}
             {!ideas.length && <Button
                 size='md'
                 height='48px'
@@ -155,7 +181,7 @@ export default function Votation() {
                 borderColor='green.500'
                 onClick={startQuiz}
             >
-              Começar
+              Começar teste!
             </Button>}
 
             {!!ideas.length && <Progress
@@ -179,6 +205,9 @@ export default function Votation() {
               (idea, index) =>
                 index === ideaIndex && (
                     <Flex  key={`Idea_${index}`} flexDirection={"column"} alignItems={"center"}  justifyContent={"center"} w={"90vw"}>
+                      <Heading size="sm" alignSelf={'flex-end'}>
+                        {ideaIndex+1} de {ideas.length}
+                      </Heading>
                       <Heading size="lg" marginBottom={"2rem"}>
                         {idea.title}
                       </Heading>
@@ -221,6 +250,7 @@ export default function Votation() {
                     w="50px"
                     h="50px"
                     bgColor="emojies.favor"
+                    variant={'link'}
                     borderRadius="50px"
                     lineHeight="62px"
                     textAlign="center"
@@ -235,6 +265,7 @@ export default function Votation() {
                   w="50px"
                   h="50px"
                   bgColor="emojies.against"
+                  variant={'link'}
                   borderRadius="50px"
                   lineHeight="62px"
                   textAlign="center"
@@ -249,6 +280,7 @@ export default function Votation() {
                   w="50px"
                   h="50px"
                   bgColor="emojies.blocker"
+                  variant={'link'}
                   borderRadius="50px"
                   lineHeight="62px"
                   textAlign="center"
@@ -263,6 +295,7 @@ export default function Votation() {
                     w="50px"
                     h="50px"
                     bgColor="emojies.abstain"
+                    variant={'link'}
                     borderRadius="50px"
                     lineHeight="62px"
                     textAlign="center"
