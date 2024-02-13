@@ -19,7 +19,7 @@ export default function Parties() {
 
   useEffect(() => {
     fetch('/api/parties').then((response) => response.json()).then((data) => {
-      setParties(data);
+      setParties(data.sort((a,b) => a.name.localeCompare(b.name)));
     });
   }, []);
 
@@ -61,7 +61,7 @@ export default function Parties() {
         <Image src={`parties/${party.logo}`} alt={`${party.name} Logo`} boxSize="6rem" borderRadius={4} />
         <Stack ml={5}>
           <Text fontSize="lg">
-            <Text as="span" fontWeight="bold">{party.acronym}</Text> ({party.name})
+            <Text as="span" fontWeight="bold">{party.name}</Text> ({party.acronym})
           </Text>
           <Text>{party.slogan}</Text>
         </Stack>

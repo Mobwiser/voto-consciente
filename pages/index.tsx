@@ -111,6 +111,8 @@ const Home = () => {
       }
     };
 
+    const description  = party1 && party2 ? `${party1.president} (${party1.acronym}) X ${party2.president} (${party2.acronym})` : debate.description || '';
+
     return (
       <Box
         borderRadius="lg"
@@ -128,11 +130,11 @@ const Home = () => {
           </Heading>
         )}
         <Flex alignItems="center" mb={4}>
-          <Image src={`parties/${party1.logo}`} alt={`${party1.name} Logo`} boxSize="4rem" mr={2} />
+          {party1 && <Image src={`parties/${party1.logo}`} alt={`${party1.name} Logo`} boxSize="4rem" mr={2} />}
           <Center>
             <Stack>
               <Heading size="sm" textAlign="center">
-                {party1.president} ({party1.acronym}) X {party2.president} ({party2.acronym})
+                {description}
               </Heading>
               <Text fontSize="md" fontWeight="bold" color="gray.500" textAlign="center" mt={2} borderRadius={4} >
                 Canal: {debate.channel}<br />
@@ -156,7 +158,7 @@ const Home = () => {
               </Center>
             </Stack>
           </Center>
-          <Image src={`parties/${party2.logo}`} alt={`${party2.name} Logo`} boxSize="4rem" ml={2} borderRadius={4} />
+          {party2 && <Image src={`parties/${party2.logo}`} alt={`${party2.name} Logo`} boxSize="4rem" ml={2} borderRadius={4} />}
         </Flex>
       </Box>
     );

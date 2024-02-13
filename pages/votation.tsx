@@ -158,7 +158,7 @@ export default function Votation() {
                       marginTop={5}
                       w={'100vw'}
                   >
-                    Começa um teste com temas aleatórios ou escolhe os temas que queres ver cobertos no questionário?
+                    Começa um quiz já ou escolhe os temas que queres ver cobertos no mesmo?
                   </Heading>
                 </Box>
             )}
@@ -218,7 +218,7 @@ export default function Votation() {
                 marginTop={5}
                 onClick={startRandomQuiz}
               >
-                Começar quiz aleatório
+                Começar quiz
               </Button>
               <Button
                   size='md'
@@ -252,19 +252,26 @@ export default function Votation() {
                   marginTop={5}
                   onClick={startRandomQuiz}
               >
-                Começar quiz aleatório!
+                Começar quiz com temas aleatórios!
               </Button>
             </Box>}
 
 
-            {!!ideas.length && <Progress
+            {!!ideas.length && <Flex gap={5}
+                                     marginTop={"1rem"}
+                                     marginBottom={"1rem"}
+                                     alignItems={'center'}
+                                     justifyContent={'space-between'}>
+              <Progress
               colorScheme="green"
               height="32px"
-              w="90vw"
-              marginTop={"1rem"}
-              marginBottom={"1rem"}
+              w="70vw"
               value={(ideaIndex / ideas.length) * 100}
-            /> }
+              />
+              <Heading size="sm" alignSelf={'flex-end'}>
+                {ideaIndex+1} de {ideas.length}
+              </Heading>
+            </Flex>}
           </Flex>
 
           {!!ideas.length && <Flex
@@ -278,9 +285,7 @@ export default function Votation() {
               (idea, index) =>
                 index === ideaIndex && (
                     <Flex  key={`Idea_${index}`} flexDirection={"column"} alignItems={"center"}  justifyContent={"center"} w={"90vw"}>
-                      <Heading size="sm" alignSelf={'flex-end'}>
-                        {ideaIndex+1} de {ideas.length}
-                      </Heading>
+
                       <Heading size="lg" marginBottom={"2rem"}>
                         {idea.title}
                       </Heading>
