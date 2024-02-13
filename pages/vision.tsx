@@ -43,7 +43,7 @@ export default function Vision() {
     if(vision && Object.keys(ideas|| {}).length) {
       writeEvent('end-quiz', appState);
     }
-  });
+  }, []);
 
   if (!parties?.length) {
     return <Flex width={'100vw'} height={'100vh'} alignItems={'center'} justifyContent={'center'}>
