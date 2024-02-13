@@ -20,6 +20,7 @@ import {writeEvent} from "./api/analytics";
 export default function Votation() {
   const [ideaIndex, setIdeaIndex] = useState(0);
   const [ideas, setIdeas] = useState<Idea[]>([]);
+  const [showSubjects, setshowSubjects] = useState<boolean>(false);
   const [subjects, setSubjects] = useState<string[]>([]);
   const [showVotationForm, setShowVotationForm] = useState(false);
   const [parties, setParties] = useState<Party[]>([]);
@@ -35,6 +36,7 @@ export default function Votation() {
           setParties(data);
         });
   }, []);
+
 
   const isSubjectChecked = (subject: string) => subjects.indexOf(subject) > -1;
 
@@ -77,7 +79,20 @@ export default function Votation() {
       return;
     }
 
-    getVotation(subjects).then((data) => {
+    startQuizWithSubjects(subjects);
+
+
+  }
+
+  const startRandomQuiz = () => {
+    const randomSubjects = Object.keys(Subjects).sort(() => Math.random() - 0.5).slice(0,2);
+
+    startQuizWithSubjects(randomSubjects);
+  }
+
+
+  const startQuizWithSubjects = (selectedSubjects) => {
+    getVotation(selectedSubjects).then((data) => {
       setIdeas(data);
       setShowVotationForm(true);
       setAppState((prevState) => ({
@@ -86,11 +101,16 @@ export default function Votation() {
       }));
 
       writeEvent('start-quiz', {
-        subjects,
+        selectedSubjects,
         ideas: data,
       })
     })
   }
+
+  const pickSubjects = () => setshowSubjects(true);
+
+  const displaySubjectsSet = !showVotationForm && showSubjects;
+  const showRandomQuiz = !showVotationForm && !showSubjects;
 
   return (
     <div>
@@ -129,7 +149,22 @@ export default function Votation() {
               Voto consciente
             </Heading>
 
-            {!showVotationForm && <Heading
+            {showRandomQuiz && (
+                <Box>
+                  <Heading
+                      size="md"
+                      color="primary"
+                      p={2}
+                      marginTop={5}
+                      w={'100vw'}
+                  >
+                    Começa um quiz já ou escolhe os temas que queres ver cobertos no mesmo?
+                  </Heading>
+                </Box>
+            )}
+
+
+            {displaySubjectsSet && <Heading
                 size="md"
                 color="primary"
                 p={2}
@@ -139,7 +174,7 @@ export default function Votation() {
               Escolhe os temas que queres ver cobertos no questionário?
             </Heading>}
 
-            {!showVotationForm && <Heading
+            {displaySubjectsSet && <Heading
                 size="sm"
                 color="secondary"
                 p={2}
@@ -148,7 +183,7 @@ export default function Votation() {
               Para cada tema que escolheres, iremos apresentar uma proposta de cada partido.
             </Heading>}
 
-            {!showVotationForm && <Box>
+            {displaySubjectsSet && <Box>
               {Object.keys(Subjects).map((subject) => (
                   <Flex key={subject}
                         flexDirection={'row'}
@@ -170,28 +205,73 @@ export default function Votation() {
             </Box>}
 
 
-            {!ideas.length && <Heading size={'sm'} textAlign={'right'} width='90vw' color={'accent'} marginBottom={5}>
+            {displaySubjectsSet && <Heading size={'sm'} textAlign={'right'} width='90vw' color={'accent'} marginBottom={5}>
               Estimativa de propostas: {subjects.length * parties.length}
             </Heading>}
-            {!ideas.length && <Button
+            {showRandomQuiz && <Flex flexDirection={'column'} gap={5}>
+              <Button
                 size='md'
                 height='48px'
                 width='90vw'
                 border='2px'
-                borderColor='green.500'
+                borderColor='primary'
+                marginTop={5}
+                onClick={startRandomQuiz}
+              >
+                Começar quiz
+              </Button>
+              <Button
+                  size='md'
+                  height='48px'
+                  width='90vw'
+                  border='2px'
+                  borderColor='accent'
+                  onClick={pickSubjects}
+                  marginTop={5}
+              >
+                Escolher temas
+              </Button>
+            </Flex>}
+            {displaySubjectsSet && <Box>
+              <Button
+                size='md'
+                height='48px'
+                width='90vw'
+                border='2px'
+                borderColor='primary'
                 onClick={startQuiz}
-            >
-              Começar teste!
-            </Button>}
+              >
+                Começar quiz!
+              </Button>
+              <Button
+                  size='md'
+                  height='48px'
+                  width='90vw'
+                  border='2px'
+                  borderColor='accent'
+                  marginTop={5}
+                  onClick={startRandomQuiz}
+              >
+                Começar quiz com temas aleatórios!
+              </Button>
+            </Box>}
 
-            {!!ideas.length && <Progress
+
+            {!!ideas.length && <Flex gap={5}
+                                     marginTop={"1rem"}
+                                     marginBottom={"1rem"}
+                                     alignItems={'center'}
+                                     justifyContent={'space-between'}>
+              <Progress
               colorScheme="green"
               height="32px"
-              w="90vw"
-              marginTop={"1rem"}
-              marginBottom={"1rem"}
+              w="70vw"
               value={(ideaIndex / ideas.length) * 100}
-            /> }
+              />
+              <Heading size="sm" alignSelf={'flex-end'}>
+                {ideaIndex+1} de {ideas.length}
+              </Heading>
+            </Flex>}
           </Flex>
 
           {!!ideas.length && <Flex
@@ -205,9 +285,7 @@ export default function Votation() {
               (idea, index) =>
                 index === ideaIndex && (
                     <Flex  key={`Idea_${index}`} flexDirection={"column"} alignItems={"center"}  justifyContent={"center"} w={"90vw"}>
-                      <Heading size="sm" alignSelf={'flex-end'}>
-                        {ideaIndex+1} de {ideas.length}
-                      </Heading>
+
                       <Heading size="lg" marginBottom={"2rem"}>
                         {idea.title}
                       </Heading>
