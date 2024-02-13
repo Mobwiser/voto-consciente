@@ -43,7 +43,7 @@ export default function Vision() {
     if(vision && Object.keys(ideas|| {}).length) {
       writeEvent('end-quiz', appState);
     }
-  }, []);
+  });
 
   if (!parties?.length) {
     return <Flex width={'100vw'} height={'100vh'} alignItems={'center'} justifyContent={'center'}>
@@ -66,7 +66,7 @@ export default function Vision() {
       if(!idea?.owners) {
         return;
       }
-      if (idea.owners.includes(party.acronym)) {
+      if (idea.owners === party.acronym) {
         switch (opinion) {
           case SupportValues.FAVOR:
             partySupport[party.acronym].support += 1;

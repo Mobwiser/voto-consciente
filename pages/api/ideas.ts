@@ -1,5 +1,5 @@
 import {NextApiRequest, NextApiResponse} from "next";
-import {collection, getDocs, query} from "firebase/firestore";
+import {collection, getDocs, query, where} from "firebase/firestore";
 import {appFirebaseDb} from "../../firebase";
 import {Subjects} from "./parties";
 
@@ -11,7 +11,7 @@ export interface Idea {
     title: string;
     description: string;
     info: string;
-    owners: string[];
+    owners: string;
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -30,7 +30,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 export const getVotation = async (subjects: string[]): Promise<Idea[]> => {
     const partiesRef = collection(appFirebaseDb, collectionName);
-    const firebaseQuery = query(partiesRef);
+    const firebaseQuery = query(partiesRef, where("subject", "in", subjects.map(subjectKey => Subjects[subjectKey])));
     const querySnapshot = await getDocs(firebaseQuery);
 
     const ideas = [];
@@ -40,9 +40,8 @@ export const getVotation = async (subjects: string[]): Promise<Idea[]> => {
 
     const subjectValues = subjects.map(subjectKey => Subjects[subjectKey]);
 
-    shuffledArray.forEach((doc) => {
++    shuffledArray.forEach((doc) => {
         const idea = {...doc.data(), id: doc.id} as Idea;
-
         if(!idea.owners?.length) {
             return;
         }
@@ -51,7 +50,7 @@ export const getVotation = async (subjects: string[]): Promise<Idea[]> => {
             return;
         }
 
-        const ownerParty = idea.owners[0];
+        const ownerParty = idea.owners;
 
         if(!counters[ownerParty]) {
             counters[ownerParty] = {
@@ -72,8 +71,7 @@ export const getVotation = async (subjects: string[]): Promise<Idea[]> => {
             return;
         }
 
-
-    })
+    });
     return ideas;
 }
 
