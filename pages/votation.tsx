@@ -171,7 +171,7 @@ export default function Votation() {
 
 
             {!ideas.length && <Heading size={'sm'} textAlign={'right'} width='90vw' color={'accent'} marginBottom={5}>
-              Estimativa de ideas: {subjects.length * parties.length}
+              Estimativa de propostas: {subjects.length * parties.length}
             </Heading>}
             {!ideas.length && <Button
                 size='md'
