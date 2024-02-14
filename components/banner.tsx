@@ -24,7 +24,7 @@ export default function Banner() {
         <Stack spacing={6} w={'full'} maxW={'lg'}>
           <Heading fontSize={{ base: '2xl', md: '3xl', lg: '4xl' }}>
             <Text fontSize="2xl" textAlign="center" color="accent">
-             Colocámos a inteligência a artificial a analisar os programas políticos e criámos um quiz para perceberes com que partido te identificas mais.
+             Colocámos a inteligência artificial a analisar os programas políticos e criámos um quiz para perceberes com que partido te identificas mais.
             </Text>
           </Heading>
           <Stack direction={{ base: 'column', md: 'row' }} spacing={4} justifyContent={'center'} align={'center'}>

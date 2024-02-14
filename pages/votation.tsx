@@ -9,7 +9,7 @@ import {
 } from '@chakra-ui/react';
 import Head from 'next/head';
 import Navbar from '../components/navbar/navbar';
-import {FaQuestion, FaRegGrinAlt, FaRegAngry, FaRegFrown} from 'react-icons/fa';
+import {FaQuestion, FaRegGrinAlt, FaRegAngry, FaRegFrown, FaRocket} from 'react-icons/fa';
 import React, {useEffect, useState} from 'react';
 import {Party, Subjects, SupportValues} from './api/parties';
 import {useRouter} from 'next/router';
@@ -26,6 +26,8 @@ export default function Votation() {
   const [parties, setParties] = useState<Party[]>([]);
 
   const router = useRouter();
+
+  const NUMBER_RANDOM_THEMES = 4;
 
   const [_appState, setAppState] = useAppContext();
 
@@ -85,7 +87,7 @@ export default function Votation() {
   }
 
   const startRandomQuiz = () => {
-    const randomSubjects = Object.keys(Subjects).sort(() => Math.random() - 0.5).slice(0,2);
+    const randomSubjects = Object.keys(Subjects).sort(() => Math.random() - 0.5).slice(0,NUMBER_RANDOM_THEMES);
 
     startQuizWithSubjects(randomSubjects);
   }
@@ -327,12 +329,27 @@ export default function Votation() {
                 <Button
                     w="50px"
                     h="50px"
-                    bgColor="emojies.favor"
+                    bgColor="emojies.brilliant"
                     variant={'link'}
                     borderRadius="50px"
                     lineHeight="62px"
                     textAlign="center"
-                    onClick={() => handleVote(SupportValues.FAVOR, currentIdea())}
+                    onClick={() => handleVote(SupportValues.BRILLIANT, currentIdea())}
+                >
+                  <Icon as={FaRocket} color="white" w={6} h={6} />
+                </Button>
+                <Text textAlign={"center"}>Grande ideia</Text>
+              </Flex>
+              <Flex flexDirection={"column"} alignItems={"center"} justifyContent={"center"} maxW={"60px"}>
+                <Button
+                  w="50px"
+                  h="50px"
+                  bgColor="emojies.favor"
+                  variant={'link'}
+                  borderRadius="50px"
+                  lineHeight="62px"
+                  textAlign="center"
+                  onClick={() => handleVote(SupportValues.FAVOR, currentIdea())}
                 >
                   <Icon as={FaRegGrinAlt} color="white" w={6} h={6} />
                 </Button>
@@ -352,21 +369,6 @@ export default function Votation() {
                   <Icon as={FaRegFrown} color="white" w={6} h={6} />
                 </Button>
                 <Text textAlign={"center"}>Não concordo</Text>
-              </Flex>
-              <Flex flexDirection={"column"} alignItems={"center"} justifyContent={"center"} maxW={"60px"}>
-                <Button
-                  w="50px"
-                  h="50px"
-                  bgColor="emojies.blocker"
-                  variant={'link'}
-                  borderRadius="50px"
-                  lineHeight="62px"
-                  textAlign="center"
-                  onClick={() => handleVote(SupportValues.BLOCKER, currentIdea())}
-                >
-                  <Icon as={FaRegAngry} color="white" w={6} h={6} />
-                </Button>
-                <Text textAlign={"center"}>Nem pensar</Text>
               </Flex>
               <Flex flexDirection={"column"} alignItems={"center"} justifyContent={"center"} maxW={"60px"}>
                 <Button

@@ -6,7 +6,7 @@ export default function MyEuriborAd () {
         <Box mt={5} p={5} bgColor="#2596be" w="100vw">
             {/* MyEuribor ad section */}
             <Heading textAlign="center" mb={5} color="white">
-                Queres melhoras as condições do teu crédito habitação?
+                Queres melhorar as condições do teu crédito habitação?
                 Descarrega a myEuribor e prevê o futuro do teu crédito.
             </Heading>
             <Flex justifyContent="center">

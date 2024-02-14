@@ -17,9 +17,9 @@ const theme = extendTheme({
     primary: '#F1A16E',
     accent: '#5966B3',
     emojies: {
+      brilliant: '#fbbd50',
       favor: '#8bc68b',
-      against: '#fbbd50',
-      blocker: '#fb3d3d',
+      against: '#fb3d3d',
       abstain: '#40a2be',
     },
   },
