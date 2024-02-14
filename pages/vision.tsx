@@ -49,6 +49,7 @@ interface PartySupport {
   name: string;
   support: number;
   color: string;
+  acronym: string;
 }
 
 export default function Vision() {
@@ -76,11 +77,11 @@ export default function Vision() {
     </Flex>; // You might want to add a loading state
   }
 
-  const maxVotingValue = Object.keys(vision || []).length / parties.length;
+  const maxVotingValue = Math.ceil(Object.keys(vision || []).length / parties.length) * 2;
 
   const partySupport: Record<string, PartySupport> = parties.reduce(
     (support: Record<string, PartySupport>, party: Party) => {
-      support[party.acronym] = { name: party.name, support: 0, color: party.color };
+      support[party.acronym] = { name: party.name, support: 0, color: party.color , acronym: party.acronym};
       return support;
     },
     {},
@@ -113,22 +114,22 @@ export default function Vision() {
   });
 
 
-  const partySupportArray = Object.values(partySupport).sort(
+  const partySupportArray = Object.values(partySupport || []).sort(
     (a, b) => b.support - a.support,
   );
 
   const data = {
-    labels: parties.map((party) => party.acronym),
+    labels: partySupportArray.map((partySupport) => partySupport.acronym),
     datasets: [
       {
         axis: 'y',
         label: 'Compatibilidade politica',
-        data: (Object.values(partySupport) || []).map(
+        data: partySupportArray.map(
           (partySupport) => Math.min(100,(Math.max(partySupport.support,0) / maxVotingValue * 100)),
         ),
         fill: false,
-        backgroundColor: (Object.values(partySupport) || []).map(partySupport => partySupport.color),
-        borderColor: (Object.values(partySupport) || []).map(partySupport => partySupport.color),
+        backgroundColor: partySupportArray.map(partySupport => partySupport.color),
+        borderColor: partySupportArray.map(partySupport => partySupport.color),
         borderWidth: 2,
         borderRadius: 5,
       },
