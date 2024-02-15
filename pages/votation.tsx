@@ -9,7 +9,7 @@ import {
 } from '@chakra-ui/react';
 import Head from 'next/head';
 import Navbar from '../components/navbar/navbar';
-import {FaQuestion, FaRegGrinAlt, FaRegAngry, FaRegFrown, FaRocket} from 'react-icons/fa';
+import {FaQuestion, FaRegGrinAlt, FaRegFrown, FaRocket} from 'react-icons/fa';
 import React, {useEffect, useState} from 'react';
 import {Party, Subjects, SupportValues} from './api/parties';
 import {useRouter} from 'next/router';
@@ -22,6 +22,7 @@ export default function Votation() {
   const [ideas, setIdeas] = useState<Idea[]>([]);
   const [showSubjects, setshowSubjects] = useState<boolean>(false);
   const [subjects, setSubjects] = useState<string[]>([]);
+  const [enableRandomQuiz] = useState(false);
   const [showVotationForm, setShowVotationForm] = useState(false);
   const [parties, setParties] = useState<Party[]>([]);
 
@@ -82,8 +83,6 @@ export default function Votation() {
     }
 
     startQuizWithSubjects(subjects);
-
-
   }
 
   const startRandomQuiz = () => {
@@ -111,8 +110,8 @@ export default function Votation() {
 
   const pickSubjects = () => setshowSubjects(true);
 
-  const displaySubjectsSet = !showVotationForm && showSubjects;
-  const showRandomQuiz = !showVotationForm && !showSubjects;
+  const displaySubjectsSet = !showVotationForm && (showSubjects || !enableRandomQuiz);
+  const showRandomQuiz = enableRandomQuiz && !showVotationForm && !showSubjects;
 
   return (
     <div>
@@ -245,7 +244,7 @@ export default function Votation() {
               >
                 Começar quiz!
               </Button>
-              <Button
+              {enableRandomQuiz && <Button
                   size='md'
                   height='48px'
                   width='90vw'
@@ -255,7 +254,7 @@ export default function Votation() {
                   onClick={startRandomQuiz}
               >
                 Começar quiz com temas aleatórios!
-              </Button>
+              </Button>}
             </Box>}
 
 
