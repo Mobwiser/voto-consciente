@@ -28,13 +28,14 @@ export interface Party {
   president: string;
   program: string;
   image: string;
+  color: string;
 }
 
 export enum SupportValues {
+  BRILLIANT = 'brilliant',
   FAVOR = 'favor',
   AGAINST = 'against',
   ABSTAIN = 'abstain',
-  BLOCKER = 'blocker',
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

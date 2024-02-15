@@ -1,30 +1,54 @@
 // Vision.tsx
 import Head from 'next/head';
 import { useAppContext } from '../context/AppContext';
-import { Radar } from 'react-chartjs-2';
+import {Bar} from 'react-chartjs-2';
 import { Party, SupportValues } from './api/parties';
 import {
   Button,
   Flex,
   Heading, Link,
-  Stat,
-  StatArrow,
-  StatHelpText,
-  StatLabel,
-  StatNumber,
   Text,
   Box, Spinner,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
+
 import Navbar from '../components/navbar/navbar';
 import {Idea} from "./api/ideas";
 import MyEuriborAd from "../components/myeuribor-ad";
 import MobwiserBanner from "../components/mobwiser-banner";
 import {writeEvent} from "./api/analytics";
+import {ArcElement, CategoryScale, Chart, Legend, LinearScale, Tooltip, BarElement} from "chart.js";
+
+Chart.register(LinearScale, ArcElement, Tooltip, Legend, CategoryScale, BarElement);
+
+export const options = {
+  indexAxis: 'x' as const,
+  elements: {
+    bar: {
+      borderWidth: 10,
+    },
+  },
+  scales: {
+    y: {
+      beginAtZero: true
+    }
+  },
+  responsive: true,
+  plugins: {
+    legend: {
+      position: 'bottom' as const,
+    },
+    title: {
+      display: true,
+    },
+  },
+};
 
 interface PartySupport {
   name: string;
   support: number;
+  color: string;
+  acronym: string;
 }
 
 export default function Vision() {
@@ -51,9 +75,11 @@ export default function Vision() {
     </Flex>; // You might want to add a loading state
   }
 
+  const maxVotingValue = Math.ceil(Object.keys(vision || []).length / parties.length) * 2;
+
   const partySupport: Record<string, PartySupport> = parties.reduce(
     (support: Record<string, PartySupport>, party: Party) => {
-      support[party.acronym] = { name: party.name, support: 0 };
+      support[party.acronym] = { name: party.name, support: 0, color: party.color , acronym: party.acronym};
       return support;
     },
     {},
@@ -72,10 +98,10 @@ export default function Vision() {
             partySupport[party.acronym].support += 1;
             break;
           case SupportValues.AGAINST:
-            partySupport[party.acronym].support -= 1;
-            break;
-          case SupportValues.BLOCKER:
             partySupport[party.acronym].support -= 2;
+            break;
+          case SupportValues.BRILLIANT:
+            partySupport[party.acronym].support += 2;
             break;
           default:
             partySupport[party.acronym].support += 0;
@@ -85,21 +111,25 @@ export default function Vision() {
     });
   });
 
-  const partySupportArray = Object.values(partySupport).sort(
+
+  const partySupportArray = Object.values(partySupport || []).sort(
     (a, b) => b.support - a.support,
   );
 
   const data = {
-    labels: parties.map((party) => party.acronym),
+    labels: partySupportArray.map((partySupport) => partySupport.acronym),
     datasets: [
       {
+        axis: 'y',
         label: 'Compatibilidade politica',
-        data: (Object.values(partySupport) || []).map(
-          (partySupport) => partySupport.support,
+        data: partySupportArray.map(
+          (partySupport) => Math.min(100,(Math.max(partySupport.support,0) / maxVotingValue * 100)),
         ),
-        backgroundColor: 'rgba(178,245,234, 0.2)',
-        borderColor: 'rgb(241,161,110)',
-        borderWidth: 1,
+        fill: false,
+        backgroundColor: partySupportArray.map(partySupport => partySupport.color),
+        borderColor: partySupportArray.map(partySupport => partySupport.color),
+        borderWidth: 2,
+        borderRadius: 5,
       },
     ],
   };
@@ -111,6 +141,10 @@ export default function Vision() {
     }
     return [];
   };
+
+  const onRestart = () => {
+    writeEvent('restart-quiz');
+  }
 
   const topMatchingParties = getTopMatchingParties();
 
@@ -171,30 +205,6 @@ export default function Vision() {
             </Box>
           )}
 
-
-          <Heading
-            color="accent"
-            as="h5"
-            size="sm"
-            marginTop={15}
-            marginBottom={15}
-            textAlign="center"
-          >
-            Compatibilidade com os diferentes partidos
-          </Heading>
-          <Flex wrap="wrap">
-            {partySupportArray.map((partySupport, index) => (
-              <Stat minW="30vw" textAlign="center" key={`stat_${index}`}>
-                <StatLabel>{partySupport.name}</StatLabel>
-                <StatNumber>{partySupport.support}</StatNumber>
-                <StatHelpText>
-                  <StatArrow
-                    type={partySupport.support > 0 ? 'increase' : 'decrease'}
-                  />
-                </StatHelpText>
-              </Stat>
-            ))}
-          </Flex>
           <Heading
             color="accent"
             as="h5"
@@ -202,10 +212,10 @@ export default function Vision() {
             marginTop={15}
             marginBottom={15}
           >
-            Radar de compatibilidade
+            Gráfico de compatibilidade
           </Heading>
-          <Radar data={data} />
-          <Link href="/votation" marginTop={5}>
+          <Bar data={data} options={options}  />
+          <Link href="/votation" marginTop={5} onClick={onRestart}>
             <Button colorScheme="teal" variant="outline">
               Recomeçar
             </Button>
