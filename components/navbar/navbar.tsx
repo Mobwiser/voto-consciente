@@ -7,17 +7,13 @@ import {
     Image,
     Stack,
     useColorModeValue,
-    useDisclosure
+    useDisclosure,
+    Link
 } from '@chakra-ui/react'
 import { CloseIcon, HamburgerIcon } from '@chakra-ui/icons'
-
-import Link from 'next/link';
 import { ReactNode } from 'react';
 import { useRouter } from 'next/router';
-
-interface Props {
-    children: React.ReactNode
-  }
+import {writeEvent} from "../../pages/api/analytics";
   
   const Links = [
       {name: "Home",
@@ -54,10 +50,23 @@ interface Props {
   
   export default function Navbar() {
     const { isOpen, onOpen, onClose } = useDisclosure()
-  
+
+      const onAdBannerClick = () => writeEvent('ad-nav-banner', {});
     return (
       <>
-        <Box bg={useColorModeValue('gray.100', 'gray.900')} px={4}>
+      <Box position={'fixed'}
+           top={0}
+           width={'100vw'}
+           height={'3.5rem'}
+           bgColor={'#2596be'}
+           color={'#fff'}
+           fontSize={'0.85rem'}
+           zIndex={9999}
+           p={2}>
+          Prevê o futuro do teu crédito habitação com a {' '}
+          <Link href={'http://myeuribor.pt'} target={'_blank'} textDecoration={'underline'} onClick={onAdBannerClick}>myEuribor.</Link>
+      </Box>
+        <Box bg={useColorModeValue('gray.100', 'gray.900')} px={4} marginTop={'3.5rem'}>
           <Flex h={20} alignItems={'center'} justifyContent={'space-between'}>
             <IconButton
               size={'lg'}
