@@ -7,6 +7,7 @@ import { Party } from "./api/parties";
 import { Debate } from "./api/debates";
 import MyEuriborAd from "../components/myeuribor-ad";
 import MobwiserBanner from "../components/mobwiser-banner";
+import {writeEvent} from "./api/analytics";
 
 const Home = () => {
   const [feedData, setFeedData] = useState(null);
@@ -68,6 +69,14 @@ const Home = () => {
     return debateDateTime < currentDate;
   };
 
+  const onDebateClick = (debate) => {
+    writeEvent('debate-view', debate);
+  }
+
+  const onNewsClick = (news) => {
+    writeEvent('news-click', news);
+  }
+
   const NewsCard = ({ item }) => (
     <Box
       borderRadius="lg"
@@ -85,7 +94,7 @@ const Home = () => {
         <Text fontSize="sm" color="gray.500">
           {new Date(item.pubDate).toLocaleDateString()}
         </Text>
-        <Link href={item.link} isExternal>
+        <Link href={item.link} isExternal onClick={() => onNewsClick(item)}>
           <Button
             bg="#5966B3"
             color="white"
@@ -143,7 +152,7 @@ const Home = () => {
               </Text>
               <Center mt={2}>
                 {debate.url ? (
-                  <Link href={debate.url} isExternal>
+                  <Link href={debate.url} isExternal onClick={() => onDebateClick(debate)}>
                     <Button
                       bg="#5966B3"
                       color={'white'}

@@ -11,7 +11,6 @@ import {
   Box, Spinner,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
 
 import Navbar from '../components/navbar/navbar';
 import {Idea} from "./api/ideas";
@@ -57,7 +56,6 @@ export default function Vision() {
   const [parties, setParties] = useState<Party[]>();
   const [ideas] = useState(appState.ideas);
   const vision: Record<number, number> | undefined = appState.vision;
-  const router = useRouter();
 
   useEffect(() => {
     fetch('/api/parties')
@@ -144,6 +142,10 @@ export default function Vision() {
     return [];
   };
 
+  const onRestart = () => {
+    writeEvent('restart-quiz');
+  }
+
   const topMatchingParties = getTopMatchingParties();
 
   return (
@@ -213,7 +215,7 @@ export default function Vision() {
             Gráfico de compatibilidade
           </Heading>
           <Bar data={data} options={options}  />
-          <Link href="/votation" marginTop={5}>
+          <Link href="/votation" marginTop={5} onClick={onRestart}>
             <Button colorScheme="teal" variant="outline">
               Recomeçar
             </Button>
