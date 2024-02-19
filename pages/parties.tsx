@@ -31,11 +31,6 @@ export default function Parties() {
     <div>
       <Head>
         <title>Partidos Políticos</title>
-        <meta
-          name="description"
-          content="Listagem de partidos Políticos"
-        />
-        <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main>

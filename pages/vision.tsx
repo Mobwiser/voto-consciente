@@ -152,11 +152,6 @@ export default function Vision() {
     <div>
       <Head>
         <title>Voto consciente</title>
-        <meta
-          name="description"
-          content="Verifica a tua identidade politica de acordo com a tua visão da sociedade"
-        />
-        <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main>
