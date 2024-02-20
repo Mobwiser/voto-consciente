@@ -1,6 +1,6 @@
 import { Html, Head, Main, NextScript } from 'next/document'
 import React from "react";
-import GoogleTagManager from "@magicul/next-google-tag-manager";
+import Script from 'next/script';
 
 export default function Document() {
     return (
@@ -10,7 +10,16 @@ export default function Document() {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <body>
-            <GoogleTagManager id="G-Q4RC1SY1JG" />
+            <Script src="https://www.googletagmanager.com/gtag/js?id=G-Q4RC1SY1JG" strategy="beforeInteractive" />
+            <Script id="google-analytics" strategy="beforeInteractive">
+                {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){window.dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', 'G-Q4RC1SY1JG');
+        `}
+            </Script>
             <Main />
             <NextScript />
             </body>
