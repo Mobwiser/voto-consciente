@@ -112,7 +112,7 @@ const Home = () => {
   const DebateCard = ({ debate, party1, party2, isFirst, isDateTimePassed }) => {
     const getBgColor = () => {
       if (isDateTimePassed && isFirst) {
-        return "cccccc";
+        return "#cccccc";
       } else if (isDateTimePassed) {
         return "#cccccc";
       } else {
@@ -133,11 +133,11 @@ const Home = () => {
         margin="auto"
         mt={5}
       >
-        {isFirst && (
+        {/*{isFirst && (
           <Heading fontSize="x-large" color={'black'} fontWeight={'bold'} mb={4} textAlign={'center'}>
             Próximo Debate:
           </Heading>
-        )}
+        )}*/}
         <Flex alignItems="center" mb={4}>
           {party1 && <Image src={`parties/${party1.logo}`} alt={`${party1.name} Logo`} boxSize="4rem" mr={2} />}
           <Center>
